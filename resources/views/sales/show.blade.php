@@ -10,6 +10,9 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Sale Details</h5>
                 <div>
+                    <a href="{{ route('sales.receipt', $sale) }}" class="btn btn-success btn-sm rounded-pill px-3" target="_blank">
+                        <i class="fas fa-print me-1"></i>Print Receipt
+                    </a>
                     <a href="{{ route('sales.edit', $sale) }}" class="btn btn-primary btn-sm rounded-pill px-3">
                         <i class="fas fa-edit me-1"></i>Edit
                     </a>

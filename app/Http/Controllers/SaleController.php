@@ -120,4 +120,13 @@ class SaleController extends Controller
         return redirect()->route('sales.index')
             ->with('success', 'Sale record deleted successfully.');
     }
+
+    /**
+     * Generate and display receipt for printing.
+     */
+    public function receipt(Sale $sale)
+    {
+        $sale->load('customer');
+        return view('sales.receipt', compact('sale'));
+    }
 }

@@ -24,7 +24,7 @@
                             @enderror
                         </div>
                         
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="customer_type" class="form-label">Customer Type *</label>
                             <select class="form-select @error('customer_type') is-invalid @enderror" id="customer_type" name="customer_type" required>
                                 <option value="">Select Type</option>
@@ -33,6 +33,19 @@
                                 <option value="wholesaler" {{ old('customer_type') == 'wholesaler' ? 'selected' : '' }}>Wholesaler</option>
                             </select>
                             @error('customer_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="source" class="form-label">How did you find us?</label>
+                            <select class="form-select @error('source') is-invalid @enderror" id="source" name="source">
+                                <option value="">Select Source</option>
+                                @foreach(\App\Models\Customer::getSourceOptions() as $key => $label)
+                                    <option value="{{ $key }}" {{ old('source') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('source')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

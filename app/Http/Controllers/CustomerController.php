@@ -52,6 +52,7 @@ class CustomerController extends Controller
             'address' => 'nullable|string',
             'location' => 'nullable|string|max:255',
             'customer_type' => 'required|in:individual,retailer,wholesaler',
+            'source' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
         ]);
 
@@ -93,6 +94,7 @@ class CustomerController extends Controller
             'address' => 'nullable|string',
             'location' => 'nullable|string|max:255',
             'customer_type' => 'required|in:individual,retailer,wholesaler',
+            'source' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
         ]);
 

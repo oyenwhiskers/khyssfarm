@@ -250,6 +250,27 @@ class DashboardController extends Controller
         
         $retentionRate = $totalCustomers > 0 ? round(($repeatCustomers / $totalCustomers) * 100, 1) : 0;
 
+        // Customer acquisition channels
+        $sourceDistribution = Customer::selectRaw('source, COUNT(*) as count')
+            ->whereNotNull('source')
+            ->groupBy('source')
+            ->get()
+            ->map(function($item) {
+                $sourceOptions = Customer::getSourceOptions();
+                $item->label = $sourceOptions[$item->source] ?? $item->source;
+                return $item;
+            });
+
+        // Add customers with no source specified
+        $noSourceCount = Customer::whereNull('source')->count();
+        if ($noSourceCount > 0) {
+            $sourceDistribution->push((object)[
+                'source' => 'unknown',
+                'label' => 'Not Specified',
+                'count' => $noSourceCount
+            ]);
+        }
+
         return [
             'typeDistribution' => $customerTypes,
             'purchasePatterns' => collect($customerPurchasePattern),
@@ -258,7 +279,8 @@ class DashboardController extends Controller
             'topCustomers' => $topCustomersByRevenue,
             'retentionRate' => $retentionRate,
             'totalCustomers' => $totalCustomers,
-            'repeatCustomers' => $repeatCustomers
+            'repeatCustomers' => $repeatCustomers,
+            'sourceDistribution' => $sourceDistribution
         ];
     }
 

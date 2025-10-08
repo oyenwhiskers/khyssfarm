@@ -137,6 +137,9 @@
                         <a class="nav-link {{ request()->routeIs('prices.*') ? 'active' : '' }}" href="{{ route('prices.index') }}">
                             <i class="fas fa-tags me-2"></i> Pricing
                         </a>
+                        <a class="nav-link {{ request()->routeIs('marketing.*') ? 'active' : '' }}" href="{{ route('marketing.index') }}">
+                            <i class="fas fa-bullhorn me-2"></i> Marketing
+                        </a>
                     </nav>
                 </div>
             </div>

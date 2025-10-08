@@ -48,6 +48,14 @@
                                     @endswitch
                                 </td>
                             </tr>
+                            @if($customer->source)
+                            <tr>
+                                <td><strong>Source:</strong></td>
+                                <td>
+                                    <span class="badge bg-primary">{{ \App\Models\Customer::getSourceOptions()[$customer->source] ?? $customer->source }}</span>
+                                </td>
+                            </tr>
+                            @endif
                             <tr>
                                 <td><strong>Phone:</strong></td>
                                 <td>{{ $customer->phone ?: 'N/A' }}</td>

@@ -7,6 +7,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CostController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\MarketingController;
 
 // Dashboard - Main landing page
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -17,3 +18,7 @@ Route::resource('sales', SaleController::class);
 Route::resource('customers', CustomerController::class);
 Route::resource('costs', CostController::class);
 Route::resource('prices', PriceController::class);
+Route::resource('marketing', MarketingController::class);
+
+// Additional routes
+Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');

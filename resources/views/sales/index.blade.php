@@ -133,6 +133,9 @@
                                 <a href="{{ route('sales.show', $sale) }}" class="btn btn-outline-info btn-sm rounded-pill" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <a href="{{ route('sales.receipt', $sale) }}" class="btn btn-outline-success btn-sm rounded-pill" title="Print Receipt" target="_blank">
+                                    <i class="fas fa-print"></i>
+                                </a>
                                 <a href="{{ route('sales.edit', $sale) }}" class="btn btn-outline-primary btn-sm rounded-pill" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>

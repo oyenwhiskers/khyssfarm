@@ -102,6 +102,7 @@
                         <th>Type</th>
                         <th>Phone</th>
                         <th>Location</th>
+                        <th>Source</th>
                         <th>Total Purchases</th>
                         <th>Total Quantity</th>
                         <th>Actions</th>
@@ -131,6 +132,13 @@
                         </td>
                         <td>{{ $customer->phone ?: '-' }}</td>
                         <td>{{ $customer->location ?: '-' }}</td>
+                        <td>
+                            @if($customer->source)
+                                <span class="badge bg-primary">{{ \App\Models\Customer::getSourceOptions()[$customer->source] ?? $customer->source }}</span>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td><strong>RM{{ number_format($customer->sales_sum_total_amount ?? 0, 2) }}</strong></td>
                         <td>{{ number_format($customer->sales_sum_quantity_kg ?? 0, 2) }} kg</td>
                         <td>
@@ -154,7 +162,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td colspan="8" class="text-center text-muted py-4">
                             No customers found. <a href="{{ route('customers.create') }}">Add your first customer</a>.
                         </td>
                     </tr>

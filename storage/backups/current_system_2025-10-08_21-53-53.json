@@ -1,0 +1,1926 @@
+{
+    "backup_info": {
+        "created_at": "2025-10-08 21:53:53",
+        "database": "khyss",
+        "laravel_version": "12.32.5",
+        "backup_type": "Laravel Full Backup",
+        "php_version": "8.4.10"
+    },
+    "schema": {
+        "cache": {
+            "columns": [
+                {
+                    "Field": "key",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "value",
+                    "Type": "mediumtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "expiration",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "cache",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "key",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "cache_locks": {
+            "columns": [
+                {
+                    "Field": "key",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "owner",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "expiration",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "cache_locks",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "key",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "costs": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "date",
+                    "Type": "date",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "category",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "description",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "amount",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "supplier",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "costs",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 10,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "customers": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "name",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "phone",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "email",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "address",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "location",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "customer_type",
+                    "Type": "enum('individual','retailer','wholesaler')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": "individual",
+                    "Extra": ""
+                },
+                {
+                    "Field": "source",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "customers",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 14,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "failed_jobs": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "uuid",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "UNI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "connection",
+                    "Type": "text",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "queue",
+                    "Type": "text",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "payload",
+                    "Type": "longtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "exception",
+                    "Type": "longtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "failed_at",
+                    "Type": "timestamp",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": "current_timestamp()",
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "failed_jobs",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "failed_jobs",
+                    "Non_unique": 0,
+                    "Key_name": "failed_jobs_uuid_unique",
+                    "Seq_in_index": 1,
+                    "Column_name": "uuid",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "harvests": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "harvest_date",
+                    "Type": "date",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "quantity_kg",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "variety",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "field_location",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "harvests",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 7,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "job_batches": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "name",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "total_jobs",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "pending_jobs",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "failed_jobs",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "failed_job_ids",
+                    "Type": "longtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "options",
+                    "Type": "mediumtext",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "cancelled_at",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "finished_at",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "job_batches",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "jobs": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "queue",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "MUL",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "payload",
+                    "Type": "longtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "attempts",
+                    "Type": "tinyint(3) unsigned",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "reserved_at",
+                    "Type": "int(10) unsigned",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "available_at",
+                    "Type": "int(10) unsigned",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "int(10) unsigned",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "jobs",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "jobs",
+                    "Non_unique": 1,
+                    "Key_name": "jobs_queue_index",
+                    "Seq_in_index": 1,
+                    "Column_name": "queue",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "marketings": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "campaign_name",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "campaign_type",
+                    "Type": "enum('lead_generation','brand_awareness','sales_conversion','customer_retention','product_launch')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "marketing_channel",
+                    "Type": "enum('facebook','instagram','tiktok','whatsapp','google_ads','flyers','radio','newspaper','word_of_mouth','event','other')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "budget_spent",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "start_date",
+                    "Type": "date",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "end_date",
+                    "Type": "date",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "description",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "leads_generated",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "impressions",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "sales_revenue",
+                    "Type": "decimal(10,2)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "customers_retained",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "product_units_sold",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "clicks",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "conversions",
+                    "Type": "int(11)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "status",
+                    "Type": "enum('active','completed','paused','cancelled')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": "active",
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "marketings",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 1,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "migrations": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "int(10) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "migration",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "batch",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "migrations",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 11,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "password_reset_tokens": {
+            "columns": [
+                {
+                    "Field": "email",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "token",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "password_reset_tokens",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "email",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "prices": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "variety",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "customer_type",
+                    "Type": "enum('individual','retailer','wholesaler')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "price_per_kg",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "effective_from",
+                    "Type": "date",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "effective_to",
+                    "Type": "date",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "is_active",
+                    "Type": "tinyint(1)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": "1",
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "prices",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "sales": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "customer_id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "YES",
+                    "Key": "MUL",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "sale_date",
+                    "Type": "date",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "quantity_kg",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "price_per_kg",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "total_amount",
+                    "Type": "decimal(10,2)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "variety",
+                    "Type": "varchar(255)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "payment_status",
+                    "Type": "enum('pending','paid','partial')",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": "pending",
+                    "Extra": ""
+                },
+                {
+                    "Field": "notes",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "sales",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 13,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "sales",
+                    "Non_unique": 1,
+                    "Key_name": "sales_customer_id_foreign",
+                    "Seq_in_index": 1,
+                    "Column_name": "customer_id",
+                    "Collation": "A",
+                    "Cardinality": 13,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "YES",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "sessions": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "user_id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "YES",
+                    "Key": "MUL",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "ip_address",
+                    "Type": "varchar(45)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "user_agent",
+                    "Type": "text",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "payload",
+                    "Type": "longtext",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "last_activity",
+                    "Type": "int(11)",
+                    "Null": "NO",
+                    "Key": "MUL",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "sessions",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 1,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "sessions",
+                    "Non_unique": 1,
+                    "Key_name": "sessions_user_id_index",
+                    "Seq_in_index": 1,
+                    "Column_name": "user_id",
+                    "Collation": "A",
+                    "Cardinality": 1,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "YES",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "sessions",
+                    "Non_unique": 1,
+                    "Key_name": "sessions_last_activity_index",
+                    "Seq_in_index": 1,
+                    "Column_name": "last_activity",
+                    "Collation": "A",
+                    "Cardinality": 1,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        },
+        "users": {
+            "columns": [
+                {
+                    "Field": "id",
+                    "Type": "bigint(20) unsigned",
+                    "Null": "NO",
+                    "Key": "PRI",
+                    "Default": null,
+                    "Extra": "auto_increment"
+                },
+                {
+                    "Field": "name",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "email",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "UNI",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "email_verified_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "password",
+                    "Type": "varchar(255)",
+                    "Null": "NO",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "remember_token",
+                    "Type": "varchar(100)",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "created_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                },
+                {
+                    "Field": "updated_at",
+                    "Type": "timestamp",
+                    "Null": "YES",
+                    "Key": "",
+                    "Default": null,
+                    "Extra": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "Table": "users",
+                    "Non_unique": 0,
+                    "Key_name": "PRIMARY",
+                    "Seq_in_index": 1,
+                    "Column_name": "id",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                },
+                {
+                    "Table": "users",
+                    "Non_unique": 0,
+                    "Key_name": "users_email_unique",
+                    "Seq_in_index": 1,
+                    "Column_name": "email",
+                    "Collation": "A",
+                    "Cardinality": 0,
+                    "Sub_part": null,
+                    "Packed": null,
+                    "Null": "",
+                    "Index_type": "BTREE",
+                    "Comment": "",
+                    "Index_comment": ""
+                }
+            ]
+        }
+    },
+    "data": {
+        "users": [],
+        "harvests": [
+            {
+                "id": 1,
+                "harvest_date": "2025-08-09",
+                "quantity_kg": "0.50",
+                "variety": "Bara",
+                "notes": "First Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:42:21",
+                "updated_at": "2025-10-08 20:42:30"
+            },
+            {
+                "id": 2,
+                "harvest_date": "2025-08-16",
+                "quantity_kg": "1.20",
+                "variety": "Bara",
+                "notes": "Second Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:42:52",
+                "updated_at": "2025-10-08 20:42:52"
+            },
+            {
+                "id": 3,
+                "harvest_date": "2025-08-23",
+                "quantity_kg": "2.00",
+                "variety": "Bara",
+                "notes": "Third Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:43:20",
+                "updated_at": "2025-10-08 20:43:20"
+            },
+            {
+                "id": 4,
+                "harvest_date": "2025-09-09",
+                "quantity_kg": "3.94",
+                "variety": "Bara",
+                "notes": "Fourth Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:43:51",
+                "updated_at": "2025-10-08 20:43:51"
+            },
+            {
+                "id": 5,
+                "harvest_date": "2025-09-17",
+                "quantity_kg": "5.42",
+                "variety": "Bara",
+                "notes": "Fifth Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:44:11",
+                "updated_at": "2025-10-08 20:44:31"
+            },
+            {
+                "id": 6,
+                "harvest_date": "2025-09-26",
+                "quantity_kg": "9.00",
+                "variety": "Bara",
+                "notes": "Sixth Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:45:01",
+                "updated_at": "2025-10-08 20:45:01"
+            },
+            {
+                "id": 7,
+                "harvest_date": "2025-10-08",
+                "quantity_kg": "23.15",
+                "variety": "Bara",
+                "notes": "Seventh Harvest",
+                "field_location": "Merpati",
+                "created_at": "2025-10-08 20:45:37",
+                "updated_at": "2025-10-08 20:45:37"
+            }
+        ],
+        "sales": [
+            {
+                "id": 1,
+                "customer_id": 5,
+                "sale_date": "2025-09-09",
+                "quantity_kg": "3.94",
+                "price_per_kg": "27.00",
+                "total_amount": "106.38",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Third harvest sales",
+                "created_at": "2025-10-08 20:48:20",
+                "updated_at": "2025-10-08 20:48:20"
+            },
+            {
+                "id": 2,
+                "customer_id": 10,
+                "sale_date": "2025-09-17",
+                "quantity_kg": "2.00",
+                "price_per_kg": "25.00",
+                "total_amount": "50.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Fourth harvest sales",
+                "created_at": "2025-10-08 20:49:46",
+                "updated_at": "2025-10-08 20:49:46"
+            },
+            {
+                "id": 3,
+                "customer_id": 3,
+                "sale_date": "2025-09-17",
+                "quantity_kg": "3.42",
+                "price_per_kg": "27.00",
+                "total_amount": "92.34",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Fourth harvest sales",
+                "created_at": "2025-10-08 20:50:41",
+                "updated_at": "2025-10-08 20:51:04"
+            },
+            {
+                "id": 4,
+                "customer_id": 5,
+                "sale_date": "2025-09-26",
+                "quantity_kg": "9.00",
+                "price_per_kg": "20.00",
+                "total_amount": "180.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Sixth Harvest Sales",
+                "created_at": "2025-10-08 20:51:55",
+                "updated_at": "2025-10-08 20:52:51"
+            },
+            {
+                "id": 5,
+                "customer_id": 12,
+                "sale_date": "2025-09-30",
+                "quantity_kg": "2.00",
+                "price_per_kg": "27.00",
+                "total_amount": "54.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:52:42",
+                "updated_at": "2025-10-08 20:52:42"
+            },
+            {
+                "id": 6,
+                "customer_id": 10,
+                "sale_date": "2025-09-30",
+                "quantity_kg": "2.00",
+                "price_per_kg": "25.00",
+                "total_amount": "50.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:53:21",
+                "updated_at": "2025-10-08 20:53:21"
+            },
+            {
+                "id": 7,
+                "customer_id": 11,
+                "sale_date": "2025-10-03",
+                "quantity_kg": "1.40",
+                "price_per_kg": "25.00",
+                "total_amount": "35.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:54:04",
+                "updated_at": "2025-10-08 20:54:29"
+            },
+            {
+                "id": 8,
+                "customer_id": 8,
+                "sale_date": "2025-10-04",
+                "quantity_kg": "3.00",
+                "price_per_kg": "17.00",
+                "total_amount": "51.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:55:10",
+                "updated_at": "2025-10-08 20:55:10"
+            },
+            {
+                "id": 9,
+                "customer_id": 6,
+                "sale_date": "2025-10-04",
+                "quantity_kg": "2.00",
+                "price_per_kg": "25.00",
+                "total_amount": "50.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:55:45",
+                "updated_at": "2025-10-08 20:55:45"
+            },
+            {
+                "id": 10,
+                "customer_id": 7,
+                "sale_date": "2025-10-05",
+                "quantity_kg": "5.00",
+                "price_per_kg": "17.00",
+                "total_amount": "85.00",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:56:18",
+                "updated_at": "2025-10-08 20:56:18"
+            },
+            {
+                "id": 11,
+                "customer_id": 5,
+                "sale_date": "2025-10-05",
+                "quantity_kg": "7.74",
+                "price_per_kg": "20.00",
+                "total_amount": "154.80",
+                "variety": "Bara",
+                "payment_status": "paid",
+                "notes": "Seventh Harvest Sales",
+                "created_at": "2025-10-08 20:57:16",
+                "updated_at": "2025-10-08 20:57:16"
+            },
+            {
+                "id": 12,
+                "customer_id": 13,
+                "sale_date": "2025-10-09",
+                "quantity_kg": "1.00",
+                "price_per_kg": "25.00",
+                "total_amount": "25.00",
+                "variety": "Bara",
+                "payment_status": "pending",
+                "notes": "Eighth Harvest Sales",
+                "created_at": "2025-10-08 21:46:12",
+                "updated_at": "2025-10-08 21:46:12"
+            },
+            {
+                "id": 13,
+                "customer_id": 14,
+                "sale_date": "2025-10-09",
+                "quantity_kg": "1.00",
+                "price_per_kg": "27.00",
+                "total_amount": "27.00",
+                "variety": "Bara",
+                "payment_status": "pending",
+                "notes": "Eighth Harvest Sales",
+                "created_at": "2025-10-08 21:46:49",
+                "updated_at": "2025-10-08 21:46:49"
+            }
+        ],
+        "customers": [
+            {
+                "id": 1,
+                "name": "Seaman Cafe",
+                "phone": "+60138686502",
+                "email": null,
+                "address": "Lot 1 Blok B6 Bandar Labuk Jaya Batu 7",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "whatsapp",
+                "notes": "Restaurant",
+                "created_at": "2025-10-08 20:22:56",
+                "updated_at": "2025-10-08 20:27:59"
+            },
+            {
+                "id": 2,
+                "name": "Pak Ali Restaurant",
+                "phone": "+60138686502",
+                "email": null,
+                "address": "Jalan Dataran BU 3, 90000 Sandakan, Sabah",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "whatsapp",
+                "notes": null,
+                "created_at": "2025-10-08 20:23:23",
+                "updated_at": "2025-10-08 20:23:23"
+            },
+            {
+                "id": 3,
+                "name": "Harimau Menangis",
+                "phone": "+60138686502",
+                "email": null,
+                "address": "Lot 1, Blok A1, IJM Batu 6, 90000 Sandakan,",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "whatsapp",
+                "notes": null,
+                "created_at": "2025-10-08 20:23:39",
+                "updated_at": "2025-10-08 20:23:39"
+            },
+            {
+                "id": 5,
+                "name": "Thai Gin Yao Mookata",
+                "phone": "+601126182919",
+                "email": null,
+                "address": "Prima Square, Lot 208, Block 21, Ground Floor, Lor Prima 8, Batu 4, Jalan Utara, 90000 Sandakan, Sabah",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "facebook",
+                "notes": null,
+                "created_at": "2025-10-08 20:25:46",
+                "updated_at": "2025-10-08 20:31:18"
+            },
+            {
+                "id": 6,
+                "name": "Kak Mala",
+                "phone": "+60128021085",
+                "email": null,
+                "address": "No Rumah 477 - 476, Lorong Mawar 7, Batu 6, Taman Mawar",
+                "location": "Sandakan",
+                "customer_type": "individual",
+                "source": "recommendation",
+                "notes": null,
+                "created_at": "2025-10-08 20:26:04",
+                "updated_at": "2025-10-08 20:31:58"
+            },
+            {
+                "id": 7,
+                "name": "Thiam Hao Yun",
+                "phone": "+60128011157",
+                "email": null,
+                "address": "Lrg Ave 4, IJM, 90000",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "recommendation",
+                "notes": null,
+                "created_at": "2025-10-08 20:27:49",
+                "updated_at": "2025-10-08 20:27:49"
+            },
+            {
+                "id": 8,
+                "name": "New King City",
+                "phone": "+60172226763",
+                "email": null,
+                "address": "Lorong Avenue 7, Taman Utama, IJM",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "recommendation",
+                "notes": null,
+                "created_at": "2025-10-08 20:29:01",
+                "updated_at": "2025-10-08 20:29:01"
+            },
+            {
+                "id": 10,
+                "name": "Dapur Seri Wijaya",
+                "phone": "+60133953769",
+                "email": null,
+                "address": "Tingkat Bawah, Lot G-A-43A, Blok A, Sejati Walk, Batu 7, Sandakan, Malaysia",
+                "location": "Sandakan",
+                "customer_type": "retailer",
+                "source": "whatsapp",
+                "notes": null,
+                "created_at": "2025-10-08 20:36:17",
+                "updated_at": "2025-10-08 20:38:24"
+            },
+            {
+                "id": 11,
+                "name": "Darma Dammang",
+                "phone": "+60195851875",
+                "email": null,
+                "address": "Taman Kenari",
+                "location": "Sandakan",
+                "customer_type": "individual",
+                "source": "recommendation",
+                "notes": null,
+                "created_at": "2025-10-08 20:38:17",
+                "updated_at": "2025-10-08 20:38:17"
+            },
+            {
+                "id": 12,
+                "name": "Julkiflee Martinis",
+                "phone": "+60178935929",
+                "email": null,
+                "address": "Taman Mawar",
+                "location": "Sandakan",
+                "customer_type": "individual",
+                "source": "recommendation",
+                "notes": null,
+                "created_at": "2025-10-08 20:38:47",
+                "updated_at": "2025-10-08 20:38:47"
+            },
+            {
+                "id": 13,
+                "name": "Jaurah Ning",
+                "phone": "+60198123205",
+                "email": null,
+                "address": "Taman Nuri Batu 7",
+                "location": "Sandakan",
+                "customer_type": "individual",
+                "source": "facebook",
+                "notes": null,
+                "created_at": "2025-10-08 20:39:04",
+                "updated_at": "2025-10-08 20:39:04"
+            },
+            {
+                "id": 14,
+                "name": "Siti Reehana",
+                "phone": "+60142004805",
+                "email": null,
+                "address": "Sungai Batang Batu 10",
+                "location": "Sandakan",
+                "customer_type": "individual",
+                "source": "facebook",
+                "notes": null,
+                "created_at": "2025-10-08 20:39:19",
+                "updated_at": "2025-10-08 20:39:19"
+            },
+            {
+                "id": 15,
+                "name": "Soleh",
+                "phone": "+60195227678",
+                "email": null,
+                "address": "Lorong Kayu",
+                "location": "Sandakan",
+                "customer_type": "wholesaler",
+                "source": "facebook",
+                "notes": null,
+                "created_at": "2025-10-08 20:40:28",
+                "updated_at": "2025-10-08 20:40:28"
+            },
+            {
+                "id": 16,
+                "name": "Karimusslam",
+                "phone": "+601112364794",
+                "email": null,
+                "address": "Pasar Bandar Sandakan",
+                "location": "Sandakan",
+                "customer_type": "wholesaler",
+                "source": "facebook",
+                "notes": null,
+                "created_at": "2025-10-08 20:41:34",
+                "updated_at": "2025-10-08 20:41:34"
+            }
+        ],
+        "costs": [
+            {
+                "id": 1,
+                "date": "2025-09-09",
+                "category": "labor",
+                "description": "Upah Petik @ 3.984KG",
+                "amount": "26.70",
+                "supplier": "Mr Karim",
+                "notes": "Rate at RM 5 per KG",
+                "created_at": "2025-10-08 20:59:34",
+                "updated_at": "2025-10-08 21:07:55"
+            },
+            {
+                "id": 2,
+                "date": "2025-09-18",
+                "category": "labor",
+                "description": "Upah Petik @ 5.42KG",
+                "amount": "40.00",
+                "supplier": "Mr Karim",
+                "notes": "Rate RM 5 per KG",
+                "created_at": "2025-10-08 21:00:06",
+                "updated_at": "2025-10-08 21:07:42"
+            },
+            {
+                "id": 3,
+                "date": "2025-09-29",
+                "category": "labor",
+                "description": "Upah Petik @ 9.00KG",
+                "amount": "45.00",
+                "supplier": "Mr Karim",
+                "notes": "Rate RM 5 per KG",
+                "created_at": "2025-10-08 21:00:36",
+                "updated_at": "2025-10-08 21:07:15"
+            },
+            {
+                "id": 4,
+                "date": "2025-09-30",
+                "category": "labor",
+                "description": "Upah Petik @ 4.00KG",
+                "amount": "20.00",
+                "supplier": "Mr Karim",
+                "notes": "Rate RM 5 per KG",
+                "created_at": "2025-10-08 21:01:25",
+                "updated_at": "2025-10-08 21:06:53"
+            },
+            {
+                "id": 5,
+                "date": "2025-09-30",
+                "category": "loan",
+                "description": "Chilli Farm Loan",
+                "amount": "308.40",
+                "supplier": "Mr Shamrim",
+                "notes": "Loan Payment for October",
+                "created_at": "2025-10-08 21:02:07",
+                "updated_at": "2025-10-08 21:02:22"
+            },
+            {
+                "id": 6,
+                "date": "2025-09-30",
+                "category": "bills",
+                "description": "Electric & Water Bill",
+                "amount": "70.00",
+                "supplier": "Mr Raimay",
+                "notes": "Bill Payment for September 2025",
+                "created_at": "2025-10-08 21:02:59",
+                "updated_at": "2025-10-08 21:02:59"
+            },
+            {
+                "id": 7,
+                "date": "2025-10-04",
+                "category": "other",
+                "description": "Facebook Ads",
+                "amount": "14.31",
+                "supplier": "Facebook",
+                "notes": null,
+                "created_at": "2025-10-08 21:03:39",
+                "updated_at": "2025-10-08 21:03:39"
+            },
+            {
+                "id": 8,
+                "date": "2025-10-05",
+                "category": "labor",
+                "description": "Upah Petik Cili @ 2.71KG",
+                "amount": "14.00",
+                "supplier": "Mr Ken",
+                "notes": "Rate RM 5 per KG",
+                "created_at": "2025-10-08 21:05:12",
+                "updated_at": "2025-10-08 21:06:24"
+            },
+            {
+                "id": 9,
+                "date": "2025-10-05",
+                "category": "labor",
+                "description": "Upah Petik Cili @ 16.44KG",
+                "amount": "82.00",
+                "supplier": "Mr Karim",
+                "notes": "Rate RM 5 per KG",
+                "created_at": "2025-10-08 21:05:57",
+                "updated_at": "2025-10-08 21:06:39"
+            },
+            {
+                "id": 10,
+                "date": "2025-10-08",
+                "category": "other",
+                "description": "Facebook Ads Marketing (5 Days)",
+                "amount": "26.50",
+                "supplier": "Facebook",
+                "notes": null,
+                "created_at": "2025-10-08 21:39:46",
+                "updated_at": "2025-10-08 21:39:46"
+            }
+        ],
+        "prices": [],
+        "marketings": [
+            {
+                "id": 5,
+                "campaign_name": "Marketplace Boosting",
+                "campaign_type": "lead_generation",
+                "marketing_channel": "facebook",
+                "budget_spent": "40.81",
+                "start_date": "2025-10-08",
+                "end_date": "2025-10-13",
+                "description": "Increase leads from facebook",
+                "leads_generated": 4,
+                "impressions": null,
+                "sales_revenue": "52.00",
+                "customers_retained": null,
+                "product_units_sold": null,
+                "clicks": 229,
+                "conversions": 2,
+                "notes": null,
+                "status": "active",
+                "created_at": "2025-10-08 21:11:09",
+                "updated_at": "2025-10-08 21:43:47"
+            }
+        ]
+    }
+}

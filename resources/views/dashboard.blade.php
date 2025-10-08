@@ -447,6 +447,44 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Customer Acquisition Channels -->
+                        <div class="row">
+                            <div class="col-lg-8 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Customer Acquisition Channels</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="customerSourceChart" height="120"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Channel Breakdown</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        @if($customerAnalytics['sourceDistribution']->isNotEmpty())
+                                            @foreach($customerAnalytics['sourceDistribution'] as $source)
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="fw-bold">{{ $source->label }}</span>
+                                                    <span class="badge bg-primary">{{ $source->count }}</span>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-muted text-center">No source data available yet</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Monthly Acquisition Chart -->
+                        <div class="row">
                             
                             <div class="col-12 mb-4">
                                 <div class="card">
@@ -859,6 +897,78 @@ new Chart(customerPurchaseCtx, {
                 display: false
             }
         }
+    }
+});
+
+// Customer Source Distribution Chart
+const customerSourceCtx = document.getElementById('customerSourceChart').getContext('2d');
+new Chart(customerSourceCtx, {
+    type: 'doughnut',
+    data: {
+        labels: @json($customerAnalytics['sourceDistribution']->pluck('label')),
+        datasets: [{
+            data: @json($customerAnalytics['sourceDistribution']->pluck('count')),
+            backgroundColor: [
+                '#4267B2', // Facebook blue
+                '#E4405F', // Instagram pink  
+                '#000000', // TikTok black
+                '#25D366', // WhatsApp green
+                '#FFA500', // Recommendation orange
+                '#6F42C1', // Repeat customer purple
+                '#6C757D', // Walk-in gray
+                '#0D6EFD', // Online search blue
+                '#FD7E14', // Marketplace orange
+                '#DC3545'  // Other red
+            ],
+            borderWidth: 2,
+            borderColor: '#fff',
+            hoverBorderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true,
+                    font: {
+                        size: 11
+                    },
+                    generateLabels: function(chart) {
+                        const data = chart.data;
+                        if (data.labels.length && data.datasets.length) {
+                            return data.labels.map((label, i) => {
+                                const count = data.datasets[0].data[i];
+                                const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = ((count / total) * 100).toFixed(1);
+                                return {
+                                    text: `${label} (${percentage}%)`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    strokeStyle: data.datasets[0].borderColor,
+                                    lineWidth: data.datasets[0].borderWidth,
+                                    hidden: false,
+                                    index: i
+                                };
+                            });
+                        }
+                        return [];
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                        return `${context.label}: ${context.parsed} customers (${percentage}%)`;
+                    }
+                }
+            }
+        },
+        cutout: '50%'
     }
 });
 

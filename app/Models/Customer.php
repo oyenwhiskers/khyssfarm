@@ -16,6 +16,7 @@ class Customer extends Model
         'address',
         'location',
         'customer_type',
+        'source',
         'notes',
     ];
 
@@ -32,5 +33,21 @@ class Customer extends Model
     public function getTotalQuantityAttribute()
     {
         return $this->sales()->sum('quantity_kg');
+    }
+
+    public static function getSourceOptions()
+    {
+        return [
+            'facebook' => 'Facebook',
+            'instagram' => 'Instagram',
+            'tiktok' => 'TikTok',
+            'whatsapp' => 'WhatsApp',
+            'recommendation' => 'Recommendation',
+            'repeat_customer' => 'Repeat Customer',
+            'walk_in' => 'Walk-in',
+            'online_search' => 'Online Search',
+            'marketplace' => 'Online Marketplace',
+            'other' => 'Other',
+        ];
     }
 }
