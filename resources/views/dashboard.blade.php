@@ -87,7 +87,10 @@
             <div class="card-body text-center">
                 <i class="fas fa-dollar-sign fa-2x mb-3"></i>
                 <h3 class="mb-1">RM{{ number_format($totalRevenue, 2) }}</h3>
-                <p class="mb-0">Total Revenue</p>
+                <p class="mb-0">Confirmed Revenue</p>
+                @if($pendingRevenue > 0)
+                    <small class="text-muted">+RM{{ number_format($pendingRevenue, 2) }} pending</small>
+                @endif
             </div>
         </div>
     </div>
@@ -112,6 +115,35 @@
         </div>
     </div>
 </div>
+
+@if($pendingRevenue > 0 || $partialRevenue > 0)
+<!-- Pending Payments Alert -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-warning d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">Outstanding Payments</h6>
+                <div class="row">
+                    @if($pendingRevenue > 0)
+                    <div class="col-md-6">
+                        <strong>Pending Payments:</strong> RM{{ number_format($pendingRevenue, 2) }}
+                    </div>
+                    @endif
+                    @if($partialRevenue > 0)
+                    <div class="col-md-6">
+                        <strong>Partial Payments:</strong> RM{{ number_format($partialRevenue, 2) }}
+                    </div>
+                    @endif
+                </div>
+            </div>
+            <a href="{{ route('sales.index') }}" class="btn btn-warning btn-sm">
+                <i class="fas fa-eye me-1"></i>View Sales
+            </a>
+        </div>
+    </div>
+</div>
+@endif
 
 <div class="row">
     <!-- Monthly Trends Chart -->

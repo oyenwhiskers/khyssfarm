@@ -13,15 +13,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Calculate key metrics
+        // Calculate key metrics (only paid sales count as revenue)
         $totalYield = Harvest::sum('quantity_kg');
-        $totalRevenue = Sale::sum('total_amount');
+        $totalRevenue = Sale::where('payment_status', 'paid')->sum('total_amount');
         $totalCosts = Cost::sum('amount');
         $netProfit = $totalRevenue - $totalCosts;
         
-        // Calculate average price per kg
-        $totalQuantitySold = Sale::sum('quantity_kg');
+        // Calculate average price per kg (only from paid sales)
+        $totalQuantitySold = Sale::where('payment_status', 'paid')->sum('quantity_kg');
         $averagePricePerKg = $totalQuantitySold > 0 ? $totalRevenue / $totalQuantitySold : 0;
+        
+        // Calculate pending amounts for dashboard display
+        $pendingRevenue = Sale::where('payment_status', 'pending')->sum('total_amount');
+        $partialRevenue = Sale::where('payment_status', 'partial')->sum('total_amount');
         
         // Get recent data
         $recentHarvests = Harvest::latest('harvest_date')->take(5)->get();
@@ -33,8 +37,10 @@ class DashboardController extends Controller
         $monthlyCosts = $this->getMonthlyData('costs', 'amount');
         $monthlyYield = $this->getMonthlyData('harvests', 'quantity_kg');
         
-        // Top customers
-        $topCustomers = Customer::withSum('sales', 'total_amount')
+        // Top customers (only from paid sales)
+        $topCustomers = Customer::withSum(['sales' => function($query) {
+                $query->where('payment_status', 'paid');
+            }], 'total_amount')
             ->orderBy('sales_sum_total_amount', 'desc')
             ->take(5)
             ->get();
@@ -69,6 +75,8 @@ class DashboardController extends Controller
             'totalCosts',
             'netProfit',
             'averagePricePerKg',
+            'pendingRevenue',
+            'partialRevenue',
             'recentHarvests',
             'recentSales',
             'recentCosts',
@@ -102,9 +110,15 @@ class DashboardController extends Controller
 
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $monthData = $model::whereYear($dateField, $date->year)
-                ->whereMonth($dateField, $date->month)
-                ->sum($column);
+            $query = $model::whereYear($dateField, $date->year)
+                ->whereMonth($dateField, $date->month);
+            
+            // For sales revenue, only count paid sales
+            if ($table === 'sales' && $column === 'total_amount') {
+                $query->where('payment_status', 'paid');
+            }
+            
+            $monthData = $query->sum($column);
             
             $data[] = [
                 'month' => $date->format('M Y'),

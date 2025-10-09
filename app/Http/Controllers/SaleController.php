@@ -26,14 +26,21 @@ class SaleController extends Controller
         }
         
         $sales = $query->latest('sale_date')->paginate(20);
-        $totalRevenue = $query->sum('total_amount');
-        $totalQuantitySold = $query->sum('quantity_kg');
+        
+        // Calculate revenue only from paid sales
+        $paidSalesQuery = clone $query;
+        $totalRevenue = $paidSalesQuery->where('payment_status', 'paid')->sum('total_amount');
+        $totalQuantitySold = $paidSalesQuery->where('payment_status', 'paid')->sum('quantity_kg');
         $averagePrice = $totalQuantitySold > 0 ? $totalRevenue / $totalQuantitySold : 0;
+        
+        // Calculate pending revenue separately for display
+        $pendingRevenueQuery = clone $query;
+        $pendingRevenue = $pendingRevenueQuery->where('payment_status', 'pending')->sum('total_amount');
         
         // Preserve filter parameters in pagination
         $sales->appends($request->query());
         
-        return view('sales.index', compact('sales', 'totalRevenue', 'totalQuantitySold', 'averagePrice'));
+        return view('sales.index', compact('sales', 'totalRevenue', 'totalQuantitySold', 'averagePrice', 'pendingRevenue'));
     }
 
     /**

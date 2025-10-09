@@ -50,30 +50,43 @@
 
 <!-- Summary Cards -->
 <div class="row mb-4">
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <div class="card text-center bg-success text-white">
             <div class="card-body">
                 <i class="fas fa-dollar-sign fa-2x mb-2"></i>
                 <h4>RM{{ number_format($totalRevenue, 2) }}</h4>
-                <p class="mb-0">Total Revenue</p>
+                <p class="mb-0">Confirmed Revenue</p>
+                <small class="opacity-75">(Paid Sales)</small>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-3">
+        <div class="card text-center bg-warning text-white">
+            <div class="card-body">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4>RM{{ number_format($pendingRevenue, 2) }}</h4>
+                <p class="mb-0">Pending Revenue</p>
+                <small class="opacity-75">(Awaiting Payment)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
         <div class="card text-center bg-info text-white">
             <div class="card-body">
                 <i class="fas fa-weight fa-2x mb-2"></i>
                 <h4>{{ number_format($totalQuantitySold, 2) }} kg</h4>
-                <p class="mb-0">Total Quantity Sold</p>
+                <p class="mb-0">Quantity Sold</p>
+                <small class="opacity-75">(Paid Sales)</small>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <div class="card text-center bg-primary text-white">
             <div class="card-body">
                 <i class="fas fa-chart-line fa-2x mb-2"></i>
                 <h4>RM{{ number_format($averagePrice, 2) }}</h4>
                 <p class="mb-0">Average Price/kg</p>
+                <small class="opacity-75">(Paid Sales)</small>
             </div>
         </div>
     </div>

@@ -27,12 +27,22 @@ class Customer extends Model
 
     public function getTotalPurchasesAttribute()
     {
-        return $this->sales()->sum('total_amount');
+        return $this->sales()->where('payment_status', 'paid')->sum('total_amount');
     }
 
     public function getTotalQuantityAttribute()
     {
-        return $this->sales()->sum('quantity_kg');
+        return $this->sales()->where('payment_status', 'paid')->sum('quantity_kg');
+    }
+
+    public function getPendingPaymentsAttribute()
+    {
+        return $this->sales()->where('payment_status', 'pending')->sum('total_amount');
+    }
+
+    public function getPartialPaymentsAttribute()
+    {
+        return $this->sales()->where('payment_status', 'partial')->sum('total_amount');
     }
 
     public static function getSourceOptions()
