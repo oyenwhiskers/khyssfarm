@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marketing;
+use App\Services\OpenAIService;
 use Illuminate\Http\Request;
 
 class MarketingController extends Controller
@@ -57,6 +58,35 @@ class MarketingController extends Controller
     {
         return view('marketing.create');
     }
+    
+    /**
+     * Generate channel recommendations for creating a new campaign
+     */
+    public function getChannelRecommendations(Request $request, OpenAIService $openAIService)
+    {
+        try {
+            $campaignType = $request->get('campaign_type', 'lead_generation');
+            $audienceType = $request->get('audience_type', 'mixed (individuals, retailers, wholesalers)');
+            $budgetRange = $request->get('budget_range', '50-500');
+            
+            $channelRecommendations = $openAIService->getChannelRecommendations(
+                $campaignType, 
+                $audienceType, 
+                $budgetRange
+            );
+            
+            return response()->json([
+                'success' => true,
+                'recommendations' => $channelRecommendations
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to generate channel recommendations. Please try again later.'
+            ], 500);
+        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -71,13 +101,8 @@ class MarketingController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'description' => 'nullable|string',
-            'leads_generated' => 'nullable|integer|min:0',
             'impressions' => 'nullable|integer|min:0',
-            'sales_revenue' => 'nullable|numeric|min:0',
-            'customers_retained' => 'nullable|integer|min:0',
-            'product_units_sold' => 'nullable|integer|min:0',
             'clicks' => 'nullable|integer|min:0',
-            'conversions' => 'nullable|integer|min:0',
             'notes' => 'nullable|string',
             'status' => 'required|in:active,completed,paused,cancelled',
         ]);
@@ -94,6 +119,53 @@ class MarketingController extends Controller
     public function show(Marketing $marketing)
     {
         return view('marketing.show', compact('marketing'));
+    }
+    
+    /**
+     * Generate AI insights for a marketing campaign
+     */
+    public function generateInsights(Marketing $marketing, OpenAIService $openAIService)
+    {
+        try {
+            // Pre-load customers with sales to avoid multiple queries
+            $marketing->load(['customers.sales']);
+            
+            // Pre-calculate expensive metrics to avoid accessor queries
+            $customers = $marketing->customers;
+            $leadsGenerated = $customers->count();
+            $conversions = $customers->filter(function($customer) {
+                return $customer->sales->where('payment_status', 'paid')->count() > 0;
+            })->count();
+            $salesRevenue = $customers->sum('total_purchases');
+            $costPerLead = $leadsGenerated > 0 ? $marketing->budget_spent / $leadsGenerated : 0;
+            $roi = $marketing->budget_spent > 0 ? (($salesRevenue - $marketing->budget_spent) / $marketing->budget_spent) * 100 : 0;
+            $conversionRate = $leadsGenerated > 0 ? ($conversions / $leadsGenerated) * 100 : 0;
+            $customerCategories = $customers->groupBy('customer_type')->map->count()->toArray();
+            
+            // Set these values on the model to avoid accessor calls
+            $marketing->setAppends([]);
+            $marketing->setAttribute('leads_generated_calculated', $leadsGenerated);
+            $marketing->setAttribute('conversions_calculated', $conversions);
+            $marketing->setAttribute('sales_revenue_calculated', $salesRevenue);
+            $marketing->setAttribute('cost_per_lead_calculated', $costPerLead);
+            $marketing->setAttribute('roi_calculated', $roi);
+            $marketing->setAttribute('conversion_rate_calculated', $conversionRate);
+            $marketing->setAttribute('customer_categories_calculated', $customerCategories);
+            
+            // Get AI insights for the campaign
+            $aiInsights = $openAIService->getMarketingInsights($marketing);
+            
+            return response()->json([
+                'success' => $aiInsights['success'],
+                'insights' => $aiInsights['insights']
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to generate AI insights. Please try again later.'
+            ], 500);
+        }
     }
 
     /**
@@ -117,13 +189,8 @@ class MarketingController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'description' => 'nullable|string',
-            'leads_generated' => 'nullable|integer|min:0',
             'impressions' => 'nullable|integer|min:0',
-            'sales_revenue' => 'nullable|numeric|min:0',
-            'customers_retained' => 'nullable|integer|min:0',
-            'product_units_sold' => 'nullable|integer|min:0',
             'clicks' => 'nullable|integer|min:0',
-            'conversions' => 'nullable|integer|min:0',
             'notes' => 'nullable|string',
             'status' => 'required|in:active,completed,paused,cancelled',
         ]);

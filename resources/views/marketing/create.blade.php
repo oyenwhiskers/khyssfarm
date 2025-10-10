@@ -133,61 +133,46 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label for="leads_generated" class="form-label">Leads Generated</label>
-                                    <input type="number" class="form-control @error('leads_generated') is-invalid @enderror" 
-                                           id="leads_generated" name="leads_generated" value="{{ old('leads_generated') }}" 
-                                           min="0" placeholder="0">
-                                    @error('leads_generated')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="impressions" class="form-label">Impressions</label>
+                                    <label for="impressions" class="form-label">Impressions (Optional)</label>
                                     <input type="number" class="form-control @error('impressions') is-invalid @enderror" 
                                            id="impressions" name="impressions" value="{{ old('impressions') }}" 
                                            min="0" placeholder="0">
                                     @error('impressions')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <div class="form-text">Digital marketing impressions (if applicable)</div>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
-                                    <label for="clicks" class="form-label">Clicks</label>
+                                    <label for="clicks" class="form-label">Clicks (Optional)</label>
                                     <input type="number" class="form-control @error('clicks') is-invalid @enderror" 
                                            id="clicks" name="clicks" value="{{ old('clicks') }}" 
                                            min="0" placeholder="0">
                                     @error('clicks')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <div class="form-text">Digital marketing clicks (if applicable)</div>
                                 </div>
                             </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control @error('notes') is-invalid @enderror" 
+                                          id="notes" name="notes" rows="3" 
+                                          placeholder="Additional notes about this campaign">{{ old('notes') }}</textarea>
+                                @error('notes')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="conversions" class="form-label">Conversions</label>
-                                    <input type="number" class="form-control @error('conversions') is-invalid @enderror" 
-                                           id="conversions" name="conversions" value="{{ old('conversions') }}" 
-                                           min="0" placeholder="0">
-                                    @error('conversions')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label for="sales_revenue" class="form-label">Sales Revenue (RM)</label>
-                                    <input type="number" class="form-control @error('sales_revenue') is-invalid @enderror" 
-                                           id="sales_revenue" name="sales_revenue" value="{{ old('sales_revenue') }}" 
-                                           step="0.01" min="0" placeholder="0.00">
-                                    @error('sales_revenue')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Automatic Tracking</h6>
+                            <p class="mb-0">Campaign performance (leads, conversions, revenue) will be automatically calculated based on customers linked to this campaign. You only need to enter the basic campaign details above.</p>
                         </div>
 
                         <div class="d-flex justify-content-between gap-2">
@@ -199,6 +184,19 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- AI Channel Recommendations -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-brain me-2 text-primary"></i>AI Channel Recommendations
+                        <span class="badge bg-primary ms-2">Powered by GPT-4</span>
+                    </h5>
+                    <div class="border-0">
+                        {!! $channelRecommendations ?? '<p class="text-muted">Loading AI recommendations...</p>' !!}
+                    </div>
                 </div>
             </div>
 

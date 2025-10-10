@@ -50,6 +50,25 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="marketing_campaign_id" class="form-label">Marketing Campaign</label>
+                            <select class="form-select @error('marketing_campaign_id') is-invalid @enderror" id="marketing_campaign_id" name="marketing_campaign_id">
+                                <option value="">No specific campaign</option>
+                                @php
+                                    $activeCampaigns = \App\Models\Marketing::where('status', 'active')->orWhere('id', $customer->marketing_campaign_id)->orderBy('campaign_name')->get();
+                                @endphp
+                                @foreach($activeCampaigns as $campaign)
+                                    <option value="{{ $campaign->id }}" {{ (old('marketing_campaign_id') ?? $customer->marketing_campaign_id) == $campaign->id ? 'selected' : '' }}>
+                                        {{ $campaign->campaign_name }} {{ $campaign->status != 'active' ? '(Ended)' : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('marketing_campaign_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Select the marketing campaign that brought this customer</div>
+                        </div>
                     </div>
                     
                     <div class="row">

@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CostController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\MarketingController;
+use App\Services\OpenAIService;
 
 // Dashboard - Main landing page
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -22,3 +23,5 @@ Route::resource('marketing', MarketingController::class);
 
 // Additional routes
 Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+Route::post('marketing/{marketing}/generate-insights', [MarketingController::class, 'generateInsights'])->name('marketing.generate-insights');
+Route::get('marketing/channel-recommendations', [MarketingController::class, 'getChannelRecommendations'])->name('marketing.channel-recommendations');

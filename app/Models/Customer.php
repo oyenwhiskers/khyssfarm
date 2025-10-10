@@ -11,18 +11,24 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
-        'phone',
+        'phone', 
         'email',
         'address',
         'location',
         'customer_type',
         'source',
-        'notes',
+        'marketing_campaign_id',
+        'notes'
     ];
 
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function marketingCampaign()
+    {
+        return $this->belongsTo(Marketing::class, 'marketing_campaign_id');
     }
 
     public function getTotalPurchasesAttribute()

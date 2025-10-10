@@ -17,13 +17,8 @@ class Marketing extends Model
         'start_date',
         'end_date',
         'description',
-        'leads_generated',
         'impressions',
-        'sales_revenue',
-        'customers_retained',
-        'product_units_sold',
         'clicks',
-        'conversions',
         'notes',
         'status',
     ];
@@ -34,6 +29,11 @@ class Marketing extends Model
         'budget_spent' => 'decimal:2',
         'sales_revenue' => 'decimal:2',
     ];
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'marketing_campaign_id');
+    }
 
     public static function getCampaignTypes()
     {
@@ -73,25 +73,41 @@ class Marketing extends Model
         ];
     }
 
-    // Calculate metrics based on campaign type
-    public function getCostPerLeadAttribute()
+    // Calculate metrics based on customer data
+    public function getLeadsGeneratedAttribute()
     {
-        return $this->leads_generated > 0 ? $this->budget_spent / $this->leads_generated : 0;
+        return $this->customers()->count();
     }
 
-    public function getCostPerImpressionAttribute()
+    public function getSalesRevenueAttribute()
     {
-        return $this->impressions > 0 ? ($this->budget_spent / $this->impressions) * 1000 : 0; // CPM
+        return $this->customers()->with('sales')->get()->sum('total_purchases');
+    }
+
+    public function getConversionsAttribute()
+    {
+        return $this->customers()->whereHas('sales', function($query) {
+            $query->where('payment_status', 'paid');
+        })->count();
+    }
+
+    public function getCostPerLeadAttribute()
+    {
+        $leads = $this->leads_generated;
+        return $leads > 0 ? $this->budget_spent / $leads : 0;
     }
 
     public function getRoiAttribute()
     {
-        return $this->budget_spent > 0 ? (($this->sales_revenue - $this->budget_spent) / $this->budget_spent) * 100 : 0;
+        $revenue = $this->sales_revenue;
+        return $this->budget_spent > 0 ? (($revenue - $this->budget_spent) / $this->budget_spent) * 100 : 0;
     }
 
     public function getConversionRateAttribute()
     {
-        return $this->clicks > 0 ? ($this->conversions / $this->clicks) * 100 : 0;
+        $leads = $this->leads_generated;
+        $conversions = $this->conversions;
+        return $leads > 0 ? ($conversions / $leads) * 100 : 0;
     }
 
     public function getDurationInDaysAttribute()
@@ -102,5 +118,14 @@ class Marketing extends Model
     public function getDailyBudgetAttribute()
     {
         return $this->duration_in_days > 0 ? $this->budget_spent / $this->duration_in_days : 0;
+    }
+
+    public function getCustomerCategoriesAttribute()
+    {
+        return $this->customers()
+            ->selectRaw('customer_type, COUNT(*) as count')
+            ->groupBy('customer_type')
+            ->pluck('count', 'customer_type')
+            ->toArray();
     }
 }

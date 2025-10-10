@@ -12,7 +12,8 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Customer::withSum('sales', 'total_amount')
+        $query = Customer::with('marketingCampaign')
+            ->withSum('sales', 'total_amount')
             ->withSum('sales', 'quantity_kg');
         
         // Apply date filters based on customer creation date
@@ -22,6 +23,11 @@ class CustomerController extends Controller
         
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        
+        // Filter by marketing campaign
+        if ($request->filled('campaign')) {
+            $query->where('marketing_campaign_id', $request->campaign);
         }
         
         $customers = $query->latest()->paginate(20);
@@ -53,6 +59,7 @@ class CustomerController extends Controller
             'location' => 'nullable|string|max:255',
             'customer_type' => 'required|in:individual,retailer,wholesaler',
             'source' => 'nullable|string|max:50',
+            'marketing_campaign_id' => 'nullable|exists:marketings,id',
             'notes' => 'nullable|string',
         ]);
 
@@ -95,6 +102,7 @@ class CustomerController extends Controller
             'location' => 'nullable|string|max:255',
             'customer_type' => 'required|in:individual,retailer,wholesaler',
             'source' => 'nullable|string|max:50',
+            'marketing_campaign_id' => 'nullable|exists:marketings,id',
             'notes' => 'nullable|string',
         ]);
 
