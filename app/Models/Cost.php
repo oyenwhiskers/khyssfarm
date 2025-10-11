@@ -37,6 +37,8 @@ class Cost extends Model
             'maintenance' => 'Maintenance',
             'bills' => 'Bills',
             'loan' => 'Loan',
+            'resell' => 'Resell',
+            'short' => 'Short',
             'other' => 'Other',
         ];
     }
