@@ -11,6 +11,7 @@ class Sale extends Model
 
     protected $fillable = [
         'customer_id',
+        'harvest_batch_id',
         'sale_date',
         'quantity_kg',
         'price_per_kg',
@@ -30,6 +31,11 @@ class Sale extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function harvestBatch()
+    {
+        return $this->belongsTo(Harvest::class, 'harvest_batch_id');
     }
 
     // Automatically calculate total amount when saving

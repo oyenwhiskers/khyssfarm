@@ -105,6 +105,75 @@
         .btn:not(.nav-link):hover {
             transition: all 0.3s ease;
         }
+        
+        /* Table Styles */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            background-color: #f8f9fa !important;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table td {
+            border-top: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Pagination Styles */
+        .pagination {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .pagination .page-link {
+            border: none;
+            padding: 12px 16px;
+            color: #495057;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .pagination .page-item:first-child .page-link,
+        .pagination .page-item:last-child .page-link {
+            border-radius: 0;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: #28a745;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
     </style>
     @yield('styles')
 </head>

@@ -23,5 +23,7 @@ Route::resource('marketing', MarketingController::class);
 
 // Additional routes
 Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+Route::get('sales-batches', [SaleController::class, 'batches'])->name('sales.batches');
+Route::get('sales-batches/{harvest}', [SaleController::class, 'batchDetail'])->name('sales.batch-detail');
 Route::post('marketing/{marketing}/generate-insights', [MarketingController::class, 'generateInsights'])->name('marketing.generate-insights');
 Route::get('marketing/channel-recommendations', [MarketingController::class, 'getChannelRecommendations'])->name('marketing.channel-recommendations');

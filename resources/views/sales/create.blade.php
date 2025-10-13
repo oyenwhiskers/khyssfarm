@@ -38,6 +38,23 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="harvest_batch_id" class="form-label">Harvest Batch</label>
+                            <select class="form-select @error('harvest_batch_id') is-invalid @enderror" id="harvest_batch_id" name="harvest_batch_id">
+                                <option value="">-- Select Harvest Batch (optional) --</option>
+                                @foreach($harvestBatches as $batch)
+                                    <option value="{{ $batch->id }}" {{ old('harvest_batch_id') == $batch->id ? 'selected' : '' }}>
+                                        Batch #{{ $batch->id }} - {{ $batch->harvest_date->format('M d, Y') }} {{ $batch->variety ? '('.$batch->variety.')' : '' }} - Available: {{ number_format($batch->available_quantity, 2) }}kg
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('harvest_batch_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">
+                                <small class="text-muted">Select a batch to track inventory. Only batches with available quantity are shown.</small>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="row">

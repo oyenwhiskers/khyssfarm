@@ -42,6 +42,25 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="harvest_batch_id" class="form-label">Harvest Batch</label>
+                            <select class="form-select @error('harvest_batch_id') is-invalid @enderror" id="harvest_batch_id" name="harvest_batch_id">
+                                <option value="">-- Select Harvest Batch (optional) --</option>
+                                @foreach($harvestBatches as $batch)
+                                    <option value="{{ $batch->id }}" 
+                                        {{ (old('harvest_batch_id') ?? $sale->harvest_batch_id) == $batch->id ? 'selected' : '' }}>
+                                        Batch #{{ $batch->id }} - {{ $batch->harvest_date->format('M d, Y') }} 
+                                        ({{ $batch->variety ?: 'Mixed' }}) - {{ number_format($batch->quantity_kg, 2) }}kg available
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('harvest_batch_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">

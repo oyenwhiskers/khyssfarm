@@ -13,55 +13,43 @@
 
     <!-- Campaign Performance Summary -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">Total Campaigns</h5>
-                            <h3 class="mb-0">{{ $campaigns->count() }}</h3>
-                        </div>
-                        <i class="fas fa-bullhorn fa-2x opacity-75"></i>
-                    </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                <div class="card-body py-4">
+                    <i class="fas fa-bullhorn fa-2x mb-3"></i>
+                    <h3 class="mb-2">{{ $campaigns->count() }}</h3>
+                    <p class="mb-1 fw-bold">Total Campaigns</p>
+                    <small class="opacity-75">Marketing Efforts</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">Total Budget</h5>
-                            <h3 class="mb-0">RM {{ number_format($totalBudget, 2) }}</h3>
-                        </div>
-                        <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
-                    </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                <div class="card-body py-4">
+                    <i class="fas fa-dollar-sign fa-2x mb-3"></i>
+                    <h3 class="mb-2">RM {{ number_format($totalBudget, 2) }}</h3>
+                    <p class="mb-1 fw-bold">Total Budget</p>
+                    <small class="opacity-75">Marketing Spend</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">Total Leads</h5>
-                            <h3 class="mb-0">{{ $totalLeads }}</h3>
-                        </div>
-                        <i class="fas fa-user-friends fa-2x opacity-75"></i>
-                    </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                <div class="card-body py-4">
+                    <i class="fas fa-user-friends fa-2x mb-3"></i>
+                    <h3 class="mb-2">{{ $totalLeads }}</h3>
+                    <p class="mb-1 fw-bold">Total Leads</p>
+                    <small class="opacity-75">Generated Prospects</small>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">Avg. Cost/Lead</h5>
-                            <h3 class="mb-0">RM {{ number_format($avgCostPerLead, 2) }}</h3>
-                        </div>
-                        <i class="fas fa-chart-line fa-2x opacity-75"></i>
-                    </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                <div class="card-body py-4">
+                    <i class="fas fa-chart-line fa-2x mb-3"></i>
+                    <h3 class="mb-2">RM {{ number_format($avgCostPerLead, 2) }}</h3>
+                    <p class="mb-1 fw-bold">Avg. Cost/Lead</p>
+                    <small class="opacity-75">Efficiency Metric</small>
                 </div>
             </div>
         </div>
@@ -115,81 +103,93 @@
     </div>
 
     <!-- Campaigns Table -->
-    <div class="card">
-        <div class="card-body">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light border-0 py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1 text-dark">Marketing Campaigns</h4>
+                    <p class="text-muted mb-0">Manage your marketing efforts and track performance</p>
+                </div>
+                <a href="{{ route('marketing.create') }}" class="btn btn-primary px-4 py-2">
+                    <i class="fas fa-plus me-2"></i>New Campaign
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
             @if($campaigns->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                             <tr>
-                                <th>Campaign Name</th>
-                                <th>Type</th>
-                                <th>Channel</th>
-                                <th>Budget</th>
-                                <th>Leads</th>
-                                <th>Cost/Lead</th>
-                                <th>ROI</th>
-                                <th>Status</th>
-                                <th>Period</th>
-                                <th>Actions</th>
+                                <th class="px-4 py-3 text-dark fw-semibold">Campaign Name</th>
+                                <th class="px-3 py-3 text-dark fw-semibold">Type</th>
+                                <th class="px-3 py-3 text-dark fw-semibold">Channel</th>
+                                <th class="px-3 py-3 text-dark fw-semibold text-end">Budget</th>
+                                <th class="px-3 py-3 text-dark fw-semibold text-center">Leads</th>
+                                <th class="px-3 py-3 text-dark fw-semibold text-end">Cost/Lead</th>
+                                <th class="px-3 py-3 text-dark fw-semibold text-center">ROI</th>
+                                <th class="px-3 py-3 text-dark fw-semibold text-center">Status</th>
+                                <th class="px-4 py-3 text-dark fw-semibold text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($campaigns as $campaign)
-                                <tr>
-                                    <td>
-                                        <strong>{{ $campaign->campaign_name }}</strong>
-                                        @if($campaign->description)
-                                            <br><small class="text-muted">{{ Str::limit($campaign->description, 50) }}</small>
-                                        @endif
+                                <tr class="align-middle">
+                                    <td class="px-4 py-4">
+                                        <div>
+                                            <h6 class="mb-1 text-dark">{{ $campaign->campaign_name }}</h6>
+                                            @if($campaign->description)
+                                                <small class="text-muted">{{ Str::limit($campaign->description, 50) }}</small>
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td>
-                                        <span class="badge bg-secondary">
+                                    <td class="px-3 py-4">
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3 py-2">
                                             {{ ucwords(str_replace('_', ' ', $campaign->campaign_type)) }}
                                         </span>
                                     </td>
-                                    <td>{{ ucwords(str_replace('_', ' ', $campaign->marketing_channel)) }}</td>
-                                    <td>RM {{ number_format($campaign->budget_spent, 2) }}</td>
-                                    <td>{{ number_format($campaign->leads_generated) }}</td>
-                                    <td>
+                                    <td class="px-3 py-4">
+                                        <span class="text-dark fw-medium">{{ ucwords(str_replace('_', ' ', $campaign->marketing_channel)) }}</span>
+                                    </td>
+                                    <td class="px-3 py-4 text-end">
+                                        <span class="text-dark fw-semibold">RM {{ number_format($campaign->budget_spent, 2) }}</span>
+                                    </td>
+                                    <td class="px-3 py-4 text-center">
+                                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">{{ number_format($campaign->leads_generated) }}</span>
+                                    </td>
+                                    <td class="px-3 py-4 text-end">
                                         @if($campaign->cost_per_lead)
-                                            RM {{ number_format($campaign->cost_per_lead, 2) }}
+                                            <span class="text-dark fw-medium">RM {{ number_format($campaign->cost_per_lead, 2) }}</span>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="px-3 py-4 text-center">
                                         @if($campaign->roi)
-                                            <span class="badge bg-{{ $campaign->roi > 0 ? 'success' : 'danger' }}">
+                                            <span class="badge bg-{{ $campaign->roi > 0 ? 'success' : 'danger' }}-subtle text-{{ $campaign->roi > 0 ? 'success' : 'danger' }} border border-{{ $campaign->roi > 0 ? 'success' : 'danger' }}-subtle rounded-pill px-3 py-2">
                                                 {{ number_format($campaign->roi, 1) }}%
                                             </span>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        <span class="badge bg-{{ $campaign->status == 'active' ? 'success' : ($campaign->status == 'completed' ? 'primary' : 'warning') }}">
+                                    <td class="px-3 py-4 text-center">
+                                        <span class="badge bg-{{ $campaign->status == 'active' ? 'success' : ($campaign->status == 'completed' ? 'primary' : 'warning') }}-subtle text-{{ $campaign->status == 'active' ? 'success' : ($campaign->status == 'completed' ? 'primary' : 'warning') }} border border-{{ $campaign->status == 'active' ? 'success' : ($campaign->status == 'completed' ? 'primary' : 'warning') }}-subtle rounded-pill px-3 py-2">
                                             {{ ucfirst($campaign->status) }}
                                         </span>
                                     </td>
-                                    <td>
-                                        <small>
-                                            {{ $campaign->start_date->format('M d') }} - 
-                                            {{ $campaign->end_date ? $campaign->end_date->format('M d, Y') : 'Ongoing' }}
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <a href="{{ route('marketing.show', $campaign) }}" class="btn btn-outline-info btn-sm rounded-pill" title="View Details">
+                                    <td class="px-4 py-4">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('marketing.show', $campaign) }}" class="btn btn-outline-info btn-sm" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('marketing.edit', $campaign) }}" class="btn btn-outline-primary btn-sm rounded-pill" title="Edit">
+                                            <a href="{{ route('marketing.edit', $campaign) }}" class="btn btn-outline-primary btn-sm" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('marketing.destroy', $campaign) }}" method="POST" style="display: inline;">
+                                            <form action="{{ route('marketing.destroy', $campaign) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Delete" 
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete" 
                                                         onclick="return confirm('Are you sure you want to delete this campaign?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -203,15 +203,28 @@
                 </div>
             @else
                 <div class="text-center py-5">
-                    <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No marketing campaigns found</h5>
-                    <p class="text-muted">Start tracking your marketing efforts by creating your first campaign.</p>
-                    <a href="{{ route('marketing.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i> Create Campaign
-                    </a>
+                    <div class="py-4">
+                        <i class="fas fa-bullhorn fa-4x text-primary mb-4 opacity-50"></i>
+                        <h4 class="text-dark mb-2">No marketing campaigns found</h4>
+                        <p class="text-muted mb-4">Start tracking your marketing efforts and boost your farm's visibility</p>
+                        <a href="{{ route('marketing.create') }}" class="btn btn-primary px-4 py-2">
+                            <i class="fas fa-plus me-2"></i>Create Your First Campaign
+                        </a>
+                    </div>
                 </div>
             @endif
         </div>
+        
+        @if($campaigns->hasPages())
+            <div class="card-footer bg-light border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        Showing {{ $campaigns->firstItem() }} to {{ $campaigns->lastItem() }} of {{ $campaigns->total() }} campaigns
+                    </div>
+                    {{ $campaigns->links() }}
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

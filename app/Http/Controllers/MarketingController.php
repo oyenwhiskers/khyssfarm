@@ -34,11 +34,12 @@ class MarketingController extends Controller
             $query->where('campaign_type', $request->campaign_type);
         }
         
-        $campaigns = $query->latest('start_date')->get();
+        $campaigns = $query->latest('start_date')->paginate(10);
         
-        // Calculate summary metrics
-        $totalBudget = $campaigns->sum('budget_spent');
-        $totalLeads = $campaigns->sum('leads_generated');
+        // Calculate summary metrics from all campaigns (not just paginated ones)
+        $allCampaigns = Marketing::all();
+        $totalBudget = $allCampaigns->sum('budget_spent');
+        $totalLeads = $allCampaigns->sum('leads_generated');
         $avgCostPerLead = $totalLeads > 0 ? $totalBudget / $totalLeads : 0;
         $activeCampaigns = Marketing::where('status', 'active')->count();
         
