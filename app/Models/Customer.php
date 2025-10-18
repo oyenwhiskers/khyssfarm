@@ -26,6 +26,11 @@ class Customer extends Model
         return $this->hasMany(Sale::class);
     }
 
+    public function resellSales()
+    {
+        return $this->hasMany(ResellSale::class);
+    }
+
     public function marketingCampaign()
     {
         return $this->belongsTo(Marketing::class, 'marketing_campaign_id');
@@ -33,12 +38,16 @@ class Customer extends Model
 
     public function getTotalPurchasesAttribute()
     {
-        return $this->sales()->where('payment_status', 'paid')->sum('total_amount');
+        $farmSales = $this->sales()->where('payment_status', 'paid')->sum('total_amount');
+        $resellSales = $this->resellSales()->sum('total_sale_amount');
+        return $farmSales + $resellSales;
     }
 
     public function getTotalQuantityAttribute()
     {
-        return $this->sales()->where('payment_status', 'paid')->sum('quantity_kg');
+        $farmQuantity = $this->sales()->where('payment_status', 'paid')->sum('quantity_kg');
+        $resellQuantity = $this->resellSales()->sum('sale_quantity_kg');
+        return $farmQuantity + $resellQuantity;
     }
 
     public function getPendingPaymentsAttribute()

@@ -128,14 +128,16 @@ class MarketingController extends Controller
     public function generateInsights(Marketing $marketing, OpenAIService $openAIService)
     {
         try {
-            // Pre-load customers with sales to avoid multiple queries
-            $marketing->load(['customers.sales']);
+            // Pre-load customers with both sales and resell sales to avoid multiple queries
+            $marketing->load(['customers.sales', 'customers.resellSales']);
             
             // Pre-calculate expensive metrics to avoid accessor queries
             $customers = $marketing->customers;
             $leadsGenerated = $customers->count();
             $conversions = $customers->filter(function($customer) {
-                return $customer->sales->where('payment_status', 'paid')->count() > 0;
+                $hasPaidSales = $customer->sales->where('payment_status', 'paid')->count() > 0;
+                $hasResellSales = $customer->resellSales->count() > 0;
+                return $hasPaidSales || $hasResellSales;
             })->count();
             $salesRevenue = $customers->sum('total_purchases');
             $costPerLead = $leadsGenerated > 0 ? $marketing->budget_spent / $leadsGenerated : 0;

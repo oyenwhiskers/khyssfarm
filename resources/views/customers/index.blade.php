@@ -172,8 +172,8 @@
                             @endif
                         </td>
                         <td class="py-3 text-center">
-                            <div class="fw-bold fs-5 text-success">RM{{ number_format($customer->sales_sum_total_amount ?? 0, 2) }}</div>
-                            <small class="text-muted">{{ number_format($customer->sales_sum_quantity_kg ?? 0, 2) }} kg purchased</small>
+                            <div class="fw-bold fs-5 text-success">RM{{ number_format($customer->total_purchases, 2) }}</div>
+                            <small class="text-muted">{{ number_format($customer->total_quantity, 2) }} kg purchased</small>
                         </td>
                         <td class="py-3 text-center">
                             <div class="btn-group" role="group">

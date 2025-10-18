@@ -86,8 +86,10 @@ class Marketing extends Model
 
     public function getConversionsAttribute()
     {
-        return $this->customers()->whereHas('sales', function($query) {
-            $query->where('payment_status', 'paid');
+        return $this->customers()->where(function($query) {
+            $query->whereHas('sales', function($subQuery) {
+                $subQuery->where('payment_status', 'paid');
+            })->orWhereHas('resellSales');
         })->count();
     }
 

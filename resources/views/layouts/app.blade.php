@@ -209,6 +209,9 @@
                         <a class="nav-link {{ request()->routeIs('marketing.*') ? 'active' : '' }}" href="{{ route('marketing.index') }}">
                             <i class="fas fa-bullhorn me-2"></i> Marketing
                         </a>
+                        <a class="nav-link {{ request()->routeIs('resells.*') ? 'active' : '' }}" href="{{ route('resells.index') }}">
+                            <i class="fas fa-exchange-alt me-2"></i> Resell Tracking
+                        </a>
                     </nav>
                 </div>
             </div>

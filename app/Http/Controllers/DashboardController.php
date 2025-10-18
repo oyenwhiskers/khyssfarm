@@ -7,6 +7,8 @@ use App\Models\Harvest;
 use App\Models\Sale;
 use App\Models\Cost;
 use App\Models\Customer;
+use App\Models\Resell;
+use App\Models\ResellSale;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -15,13 +17,24 @@ class DashboardController extends Controller
     {
         // Calculate key metrics (only paid sales count as revenue)
         $totalYield = Harvest::sum('quantity_kg');
-        $totalRevenue = Sale::where('payment_status', 'paid')->sum('total_amount');
+        $farmRevenue = Sale::where('payment_status', 'paid')->sum('total_amount');
         $totalCosts = Cost::sum('amount');
-        $netProfit = $totalRevenue - $totalCosts;
+        
+        // Resell metrics
+        $resellYield = Resell::sum('purchase_quantity_kg'); // Total chili purchased for resell
+        $resellPurchaseCosts = Resell::sum('total_purchase_cost');
+        $resellRevenue = ResellSale::sum('total_sale_amount');
+        $resellProfit = ResellSale::sum('profit_amount');
+        
+        // Combined metrics
+        $totalRevenue = $farmRevenue + $resellRevenue;
+        $totalAllCosts = $totalCosts + $resellPurchaseCosts;
+        $farmProfit = $farmRevenue - $totalCosts;
+        $grandTotalProfit = $farmProfit + $resellProfit;
         
         // Calculate average price per kg (only from paid sales)
         $totalQuantitySold = Sale::where('payment_status', 'paid')->sum('quantity_kg');
-        $averagePricePerKg = $totalQuantitySold > 0 ? $totalRevenue / $totalQuantitySold : 0;
+        $averagePricePerKg = $totalQuantitySold > 0 ? $farmRevenue / $totalQuantitySold : 0;
         
         // Calculate pending amounts for dashboard display
         $pendingRevenue = Sale::where('payment_status', 'pending')->sum('total_amount');
@@ -37,13 +50,16 @@ class DashboardController extends Controller
         $monthlyCosts = $this->getMonthlyData('costs', 'amount');
         $monthlyYield = $this->getMonthlyData('harvests', 'quantity_kg');
         
-        // Top customers (only from paid sales)
-        $topCustomers = Customer::withSum(['sales' => function($query) {
-                $query->where('payment_status', 'paid');
-            }], 'total_amount')
-            ->orderBy('sales_sum_total_amount', 'desc')
-            ->take(5)
-            ->get();
+        // Top customers (including both farm and resell sales)
+        $topCustomers = Customer::all()
+            ->map(function($customer) {
+                $farmRevenue = $customer->sales()->where('payment_status', 'paid')->sum('total_amount');
+                $resellRevenue = $customer->resellSales()->sum('total_sale_amount');
+                $customer->total_revenue = $farmRevenue + $resellRevenue;
+                return $customer;
+            })
+            ->sortByDesc('total_revenue')
+            ->take(5);
         
         // Customer location distribution
         $customersByLocation = Customer::selectRaw('location, COUNT(*) as count')
@@ -71,9 +87,16 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'totalYield',
+            'resellYield',
+            'farmRevenue',
             'totalRevenue',
             'totalCosts',
-            'netProfit',
+            'totalAllCosts',
+            'farmProfit',
+            'resellRevenue',
+            'resellPurchaseCosts',
+            'resellProfit',
+            'grandTotalProfit',
             'averagePricePerKg',
             'pendingRevenue',
             'partialRevenue',
@@ -213,13 +236,18 @@ class DashboardController extends Controller
             ->groupBy('customer_type')
             ->get();
 
-        // Customer purchase patterns
-        $customerPurchasePattern = Customer::withSum('sales', 'total_amount')
-            ->withSum('sales', 'quantity_kg')
-            ->withCount('sales')
-            ->get()
+        // Customer purchase patterns (including both farm sales and resell sales)
+        $customerPurchasePattern = Customer::all()
+            ->map(function($customer) {
+                $farmSales = $customer->sales()->sum('total_amount');
+                $resellSales = $customer->resellSales()->sum('total_sale_amount');
+                $totalPurchases = $farmSales + $resellSales;
+                
+                $customer->total_purchases = $totalPurchases;
+                return $customer;
+            })
             ->groupBy(function($customer) {
-                $totalPurchases = $customer->sales_sum_total_amount ?? 0;
+                $totalPurchases = $customer->total_purchases;
                 if ($totalPurchases >= 1000) return 'High Value (RM1000+)';
                 if ($totalPurchases >= 500) return 'Medium Value (RM500-999)';
                 if ($totalPurchases >= 100) return 'Low Value (RM100-499)';
@@ -229,59 +257,111 @@ class DashboardController extends Controller
                 return $group->count();
             });
 
-        // Monthly customer acquisition
+        // Monthly customer acquisition with purchase tracking (including resell sales)
         $monthlyCustomers = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $count = Customer::whereYear('created_at', $date->year)
+            
+            // Total new customers in this month
+            $newCustomers = Customer::whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
+                ->count();
+            
+            // New customers who actually made purchases (farm or resell)
+            $newCustomersWithPurchases = Customer::whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->where(function($query) {
+                    $query->whereHas('sales')
+                          ->orWhereHas('resellSales');
+                })
                 ->count();
             
             $monthlyCustomers[] = [
                 'month' => $date->format('M Y'),
-                'count' => $count
+                'new_customers' => $newCustomers,
+                'customers_with_purchases' => $newCustomersWithPurchases
             ];
         }
 
-        // Customer location analytics
+        // Customer location analytics (including resell sales)
         $locationStats = Customer::leftJoin('sales', 'customers.id', '=', 'sales.customer_id')
-            ->selectRaw('customers.location, COUNT(DISTINCT customers.id) as customer_count, COALESCE(SUM(sales.total_amount), 0) as total_revenue')
+            ->leftJoin('resell_sales', 'customers.id', '=', 'resell_sales.customer_id')
+            ->selectRaw('
+                customers.location, 
+                COUNT(DISTINCT customers.id) as customer_count, 
+                COALESCE(SUM(sales.total_amount), 0) + COALESCE(SUM(resell_sales.total_sale_amount), 0) as total_revenue
+            ')
             ->groupBy('customers.location')
             ->whereNotNull('customers.location')
             ->get();
 
-        // Top customers by revenue
-        $topCustomersByRevenue = Customer::withSum('sales', 'total_amount')
-            ->orderBy('sales_sum_total_amount', 'desc')
-            ->take(10)
-            ->get();
+        // Top customers by total revenue (farm + resell sales)
+        $topCustomersByRevenue = Customer::all()
+            ->map(function($customer) {
+                $farmRevenue = $customer->sales()->sum('total_amount');
+                $resellRevenue = $customer->resellSales()->sum('total_sale_amount');
+                $customer->total_revenue = $farmRevenue + $resellRevenue;
+                return $customer;
+            })
+            ->sortByDesc('total_revenue')
+            ->take(10);
 
-        // Customer retention rate (customers who made multiple purchases)
+        // Customer retention rate (customers who made multiple purchases in either farm or resell)
         $totalCustomers = Customer::count();
-        $repeatCustomers = Customer::withCount('sales')
-            ->having('sales_count', '>', 1)
+        $repeatCustomers = Customer::whereHas('sales', function($query) {
+                $query->havingRaw('COUNT(*) > 1');
+            })
+            ->orWhereHas('resellSales', function($query) {
+                $query->havingRaw('COUNT(*) > 1');
+            })
+            ->orWhere(function($query) {
+                $query->whereHas('sales')
+                      ->whereHas('resellSales');
+            })
             ->count();
         
         $retentionRate = $totalCustomers > 0 ? round(($repeatCustomers / $totalCustomers) * 100, 1) : 0;
 
-        // Customer acquisition channels
-        $sourceDistribution = Customer::selectRaw('source, COUNT(*) as count')
+        // Customer acquisition channels with conversion data (including resell sales)
+        $sourceDistribution = Customer::selectRaw('
+                source, 
+                COUNT(*) as total_customers,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM sales WHERE sales.customer_id = customers.id
+                    UNION
+                    SELECT 1 FROM resell_sales WHERE resell_sales.customer_id = customers.id
+                ) THEN 1 END) as customers_with_purchases
+            ')
             ->whereNotNull('source')
             ->groupBy('source')
             ->get()
             ->map(function($item) {
                 $sourceOptions = Customer::getSourceOptions();
                 $item->label = $sourceOptions[$item->source] ?? $item->source;
+                $item->conversion_rate = $item->total_customers > 0 ? round(($item->customers_with_purchases / $item->total_customers) * 100, 1) : 0;
                 return $item;
             });
 
-        // Add customers with no source specified
-        $noSourceCount = Customer::whereNull('source')->count();
-        if ($noSourceCount > 0) {
+        // Add customers with no source specified (including resell sales)
+        $noSourceCustomers = Customer::selectRaw('
+                COUNT(*) as total_customers,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM sales WHERE sales.customer_id = customers.id
+                    UNION
+                    SELECT 1 FROM resell_sales WHERE resell_sales.customer_id = customers.id
+                ) THEN 1 END) as customers_with_purchases
+            ')
+            ->whereNull('source')
+            ->first();
+            
+        if ($noSourceCustomers && $noSourceCustomers->total_customers > 0) {
+            $conversionRate = round(($noSourceCustomers->customers_with_purchases / $noSourceCustomers->total_customers) * 100, 1);
             $sourceDistribution->push((object)[
                 'source' => 'unknown',
                 'label' => 'Not Specified',
-                'count' => $noSourceCount
+                'total_customers' => $noSourceCustomers->total_customers,
+                'customers_with_purchases' => $noSourceCustomers->customers_with_purchases,
+                'conversion_rate' => $conversionRate
             ]);
         }
 

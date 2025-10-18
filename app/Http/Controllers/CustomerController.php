@@ -12,9 +12,7 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Customer::with('marketingCampaign')
-            ->withSum('sales', 'total_amount')
-            ->withSum('sales', 'quantity_kg');
+        $query = Customer::with('marketingCampaign');
         
         // Apply date filters based on customer creation date
         if ($request->filled('date_from')) {
