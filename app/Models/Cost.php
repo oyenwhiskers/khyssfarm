@@ -38,6 +38,7 @@ class Cost extends Model
             'bills' => 'Bills',
             'loan' => 'Loan',
             'resell' => 'Resell',
+            'marketing' => 'Marketing',
             'short' => 'Short',
             'other' => 'Other',
         ];

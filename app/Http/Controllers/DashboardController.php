@@ -213,6 +213,21 @@ class DashboardController extends Controller
             ];
         }
 
+        // Daily harvest trends (last 30 days with actual harvest data)
+        $dailyHarvestTrends = Harvest::where('harvest_date', '>=', Carbon::now()->subDays(30))
+            ->orderBy('harvest_date', 'asc')
+            ->selectRaw('harvest_date, SUM(quantity_kg) as daily_yield')
+            ->groupBy('harvest_date')
+            ->get()
+            ->map(function($harvest) {
+                return [
+                    'date' => Carbon::parse($harvest->harvest_date)->format('M d'),
+                    'full_date' => Carbon::parse($harvest->harvest_date)->format('Y-m-d'),
+                    'yield' => $harvest->daily_yield,
+                    'day_name' => Carbon::parse($harvest->harvest_date)->format('D')
+                ];
+            });
+
         // Average daily yield
         $avgDailyYield = Harvest::avg('quantity_kg') ?: 0;
         
@@ -223,6 +238,7 @@ class DashboardController extends Controller
             'monthlyComparison' => collect($monthlyYieldComparison),
             'varietyBreakdown' => $yieldByVarietyWithPercentage,
             'weeklyTrends' => collect($weeklyYield),
+            'dailyHarvestTrends' => $dailyHarvestTrends,
             'avgDailyYield' => $avgDailyYield,
             'bestMonth' => $bestMonth,
             'totalVarieties' => $yieldByVariety->count()

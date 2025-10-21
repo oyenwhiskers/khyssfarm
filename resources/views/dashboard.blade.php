@@ -475,14 +475,22 @@
                                     </div>
                                 </div>
 
-                                <!-- Weekly Yield Pattern -->
+                                <!-- Harvest Trends -->
                                 <div class="col-lg-6 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-warning text-dark">
-                                            <h6 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Weekly Yield Pattern</h6>
+                                            <h6 class="mb-0"><i class="bi bi-calendar-date me-2"></i>Harvest Trends</h6>
                                         </div>
                                         <div class="card-body">
-                                            <canvas id="weeklyYieldChart" height="150"></canvas>
+                                            @if($yieldAnalytics['dailyHarvestTrends']->count() > 0)
+                                                <canvas id="weeklyYieldChart" height="150"></canvas>
+                                            @else
+                                                <div class="text-center py-4">
+                                                    <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
+                                                    <p class="text-muted mt-2 mb-0">No harvest data in the last 30 days</p>
+                                                    <small class="text-muted">Add harvest records to see trends</small>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -809,30 +817,96 @@ new Chart(varietyCtx, {
     }
 });
 
-// Weekly Yield Pattern Chart
+// Harvest Trends Chart
+@if($yieldAnalytics['dailyHarvestTrends']->count() > 0)
 const weeklyYieldCtx = document.getElementById('weeklyYieldChart').getContext('2d');
 new Chart(weeklyYieldCtx, {
-    type: 'bar',
+    type: 'line',
     data: {
         labels: [
-            @foreach($yieldAnalytics['weeklyTrends'] as $week)
-            '{{ $week['week'] }}',
+            @foreach($yieldAnalytics['dailyHarvestTrends'] as $harvest)
+            '{{ $harvest['date'] }}',
             @endforeach
         ],
         datasets: [{
-            label: 'Weekly Yield (kg)',
+            label: 'Daily Harvest (kg)',
             data: [
-                @foreach($yieldAnalytics['weeklyTrends'] as $week)
-                {{ $week['yield'] }},
+                @foreach($yieldAnalytics['dailyHarvestTrends'] as $harvest)
+                {{ $harvest['yield'] }},
                 @endforeach
             ],
-            backgroundColor: 'rgba(251, 191, 36, 0.8)',
             borderColor: 'rgb(251, 191, 36)',
-            borderWidth: 1
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: 'rgb(251, 191, 36)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7
         }]
     },
-    options: chartOptions
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value + ' kg';
+                    }
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                borderColor: 'rgb(251, 191, 36)',
+                borderWidth: 1,
+                callbacks: {
+                    title: function(context) {
+                        const index = context[0].dataIndex;
+                        const harvestData = [
+                            @foreach($yieldAnalytics['dailyHarvestTrends'] as $harvest)
+                            {
+                                date: '{{ $harvest['date'] }}',
+                                fullDate: '{{ $harvest['full_date'] }}',
+                                dayName: '{{ $harvest['day_name'] }}'
+                            },
+                            @endforeach
+                        ];
+                        const harvest = harvestData[index];
+                        return `${harvest.dayName}, ${harvest.date}`;
+                    },
+                    label: function(context) {
+                        return `Harvest: ${context.parsed.y} kg`;
+                    }
+                }
+            }
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        }
+    }
 });
+@endif
 
 // Cost vs Revenue Chart
 const costRevenueCtx = document.getElementById('costRevenueChart').getContext('2d');
@@ -1169,19 +1243,36 @@ new Chart(channelDistributionCtx, {
 
 // Cost Breakdown Chart
 const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
-// Note: You'll need to add cost category data to the controller
 new Chart(costBreakdownCtx, {
     type: 'doughnut',
     data: {
-        labels: ['Seeds', 'Fertilizer', 'Labor', 'Equipment', 'Other'],
+        labels: [
+            @foreach($costAnalytics['categoryBreakdown'] as $category)
+            '{{ ucfirst($category->category) }}',
+            @endforeach
+        ],
         datasets: [{
-            data: [25, 30, 20, 15, 10], // Sample data - replace with actual
+            data: [
+                @foreach($costAnalytics['categoryBreakdown'] as $category)
+                {{ $category->total }},
+                @endforeach
+            ],
             backgroundColor: [
-                'rgb(239, 68, 68)',
-                'rgb(251, 191, 36)',
-                'rgb(34, 197, 94)',
-                'rgb(59, 130, 246)',
-                'rgb(168, 85, 247)'
+                'rgb(239, 68, 68)',    // Red
+                'rgb(251, 191, 36)',   // Yellow
+                'rgb(34, 197, 94)',    // Green
+                'rgb(59, 130, 246)',   // Blue
+                'rgb(168, 85, 247)',   // Purple
+                'rgb(236, 72, 153)',   // Pink
+                'rgb(14, 165, 233)',   // Sky
+                'rgb(139, 69, 19)',    // Brown
+                'rgb(245, 101, 101)',  // Light Red
+                'rgb(34, 211, 238)',   // Cyan
+                'rgb(252, 165, 165)',  // Light Pink
+                'rgb(167, 243, 208)',  // Light Green
+                'rgb(196, 181, 253)',  // Light Purple
+                'rgb(254, 240, 138)',  // Light Yellow
+                'rgb(156, 163, 175)'   // Gray
             ]
         }]
     },
@@ -1191,6 +1282,17 @@ new Chart(costBreakdownCtx, {
         plugins: {
             legend: {
                 position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label;
+                        const value = context.parsed;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return `${label}: RM${value.toLocaleString()} (${percentage}%)`;
+                    }
+                }
             }
         }
     }

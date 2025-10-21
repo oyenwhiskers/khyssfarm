@@ -24,17 +24,28 @@
             </div>
             <div class="card-body bg-white">
                 <form method="GET" action="{{ route('costs.index') }}" class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="date_from" class="form-label">From Date</label>
                         <input type="date" class="form-control" id="date_from" name="date_from" 
                                value="{{ request('date_from') }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="date_to" class="form-label">To Date</label>
                         <input type="date" class="form-control" id="date_to" name="date_to" 
                                value="{{ request('date_to') }}">
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $key => $label)
+                                <option value="{{ $key }}" {{ request('category') == $key ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary rounded-pill px-4 me-2">
                             <i class="fas fa-search me-1"></i>Filter
                         </button>
@@ -126,6 +137,9 @@
                                             @break
                                             @case('maintenance')
                                                 <i class="fas fa-wrench me-1"></i>
+                                            @break
+                                            @case('marketing')
+                                                <i class="fas fa-bullhorn me-1"></i>
                                             @break
                                             @default
                                                 <i class="fas fa-receipt me-1"></i>

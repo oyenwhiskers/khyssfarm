@@ -23,6 +23,11 @@ class CostController extends Controller
             $query->whereDate('date', '<=', $request->date_to);
         }
         
+        // Apply category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
         $costs = $query->latest('date')->paginate(20);
         $totalCosts = $query->sum('amount');
         $costsByCategory = $query->selectRaw('category, SUM(amount) as total')
@@ -30,10 +35,13 @@ class CostController extends Controller
             ->orderBy('total', 'desc')
             ->get();
             
+        // Get all categories for filter dropdown
+        $categories = Cost::getCostCategories();
+            
         // Preserve filter parameters in pagination
         $costs->appends($request->query());
             
-        return view('costs.index', compact('costs', 'totalCosts', 'costsByCategory'));
+        return view('costs.index', compact('costs', 'totalCosts', 'costsByCategory', 'categories'));
     }
 
     /**
