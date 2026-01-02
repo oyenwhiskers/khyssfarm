@@ -13,18 +13,48 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Get date filter parameters
+        $dateFrom = $request->filled('date_from') ? Carbon::parse($request->date_from) : null;
+        $dateTo = $request->filled('date_to') ? Carbon::parse($request->date_to) : null;
+        
+        // Get trends period parameter (default 6 months)
+        $trendsPeriod = $request->get('trends_period', 6);
+        
+        // Build base queries with date filters
+        $harvestQuery = Harvest::query();
+        $saleQuery = Sale::query();
+        $costQuery = Cost::query();
+        $resellQuery = Resell::query();
+        $resellSaleQuery = ResellSale::query();
+        
+        if ($dateFrom) {
+            $harvestQuery->where('harvest_date', '>=', $dateFrom);
+            $saleQuery->where('sale_date', '>=', $dateFrom);
+            $costQuery->where('date', '>=', $dateFrom);
+            $resellQuery->where('purchase_date', '>=', $dateFrom);
+            $resellSaleQuery->where('sale_date', '>=', $dateFrom);
+        }
+        
+        if ($dateTo) {
+            $harvestQuery->where('harvest_date', '<=', $dateTo);
+            $saleQuery->where('sale_date', '<=', $dateTo);
+            $costQuery->where('date', '<=', $dateTo);
+            $resellQuery->where('purchase_date', '<=', $dateTo);
+            $resellSaleQuery->where('sale_date', '<=', $dateTo);
+        }
+        
         // Calculate key metrics (only paid sales count as revenue)
-        $totalYield = Harvest::sum('quantity_kg');
-        $farmRevenue = Sale::where('payment_status', 'paid')->sum('total_amount');
-        $totalCosts = Cost::sum('amount');
+        $totalYield = $harvestQuery->sum('quantity_kg');
+        $farmRevenue = (clone $saleQuery)->where('payment_status', 'paid')->sum('total_amount');
+        $totalCosts = $costQuery->sum('amount');
         
         // Resell metrics
-        $resellYield = Resell::sum('purchase_quantity_kg'); // Total chili purchased for resell
-        $resellPurchaseCosts = Resell::sum('total_purchase_cost');
-        $resellRevenue = ResellSale::sum('total_sale_amount');
-        $resellProfit = ResellSale::sum('profit_amount');
+        $resellYield = $resellQuery->sum('purchase_quantity_kg'); // Total chili purchased for resell
+        $resellPurchaseCosts = $resellQuery->sum('total_purchase_cost');
+        $resellRevenue = $resellSaleQuery->sum('total_sale_amount');
+        $resellProfit = $resellSaleQuery->sum('profit_amount');
         
         // Combined metrics
         $totalRevenue = $farmRevenue + $resellRevenue;
@@ -33,33 +63,32 @@ class DashboardController extends Controller
         $grandTotalProfit = $farmProfit + $resellProfit;
         
         // Calculate average price per kg (only from paid sales)
-        $totalQuantitySold = Sale::where('payment_status', 'paid')->sum('quantity_kg');
+        $totalQuantitySold = (clone $saleQuery)->where('payment_status', 'paid')->sum('quantity_kg');
         $averagePricePerKg = $totalQuantitySold > 0 ? $farmRevenue / $totalQuantitySold : 0;
         
         // Calculate pending amounts for dashboard display
-        $pendingRevenue = Sale::where('payment_status', 'pending')->sum('total_amount');
-        $partialRevenue = Sale::where('payment_status', 'partial')->sum('total_amount');
+        $pendingRevenue = (clone $saleQuery)->where('payment_status', 'pending')->sum('total_amount');
+        $partialRevenue = (clone $saleQuery)->where('payment_status', 'partial')->sum('total_amount');
         
         // Get recent data
-        $recentHarvests = Harvest::latest('harvest_date')->take(5)->get();
-        $recentSales = Sale::with('customer')->latest('sale_date')->take(5)->get();
-        $recentCosts = Cost::latest('date')->take(5)->get();
+        $recentHarvests = (clone $harvestQuery)->latest('harvest_date')->take(5)->get();
+        $recentSales = (clone $saleQuery)->with('customer')->latest('sale_date')->take(5)->get();
+        $recentCosts = (clone $costQuery)->latest('date')->take(5)->get();
         
         // Monthly data for charts
-        $monthlyRevenue = $this->getMonthlyData('sales', 'total_amount');
-        $monthlyCosts = $this->getMonthlyData('costs', 'amount');
-        $monthlyYield = $this->getMonthlyData('harvests', 'quantity_kg');
+        $monthlyRevenue = $this->getMonthlyData('sales', 'total_amount', $trendsPeriod, $dateFrom, $dateTo);
+        $monthlyCosts = $this->getMonthlyData('costs', 'amount', $trendsPeriod, $dateFrom, $dateTo);
+        $monthlyYield = $this->getMonthlyData('harvests', 'quantity_kg', $trendsPeriod, $dateFrom, $dateTo);
         
-        // Top customers (including both farm and resell sales)
-        $topCustomers = Customer::all()
-            ->map(function($customer) {
-                $farmRevenue = $customer->sales()->where('payment_status', 'paid')->sum('total_amount');
-                $resellRevenue = $customer->resellSales()->sum('total_sale_amount');
-                $customer->total_revenue = $farmRevenue + $resellRevenue;
-                return $customer;
-            })
-            ->sortByDesc('total_revenue')
-            ->take(5);
+        // OPTIMIZED: Top customers using aggregation instead of loading all customers
+        $topCustomers = Customer::select('customers.*')
+            ->selectRaw('(
+                COALESCE((SELECT SUM(sales.total_amount) FROM sales WHERE sales.customer_id = customers.id AND sales.payment_status = "paid"), 0) +
+                COALESCE((SELECT SUM(resell_sales.total_sale_amount) FROM resell_sales WHERE resell_sales.customer_id = customers.id), 0)
+            ) as total_revenue')
+            ->orderByDesc('total_revenue')
+            ->limit(5)
+            ->get();
         
         // Customer location distribution
         $customersByLocation = Customer::selectRaw('location, COUNT(*) as count')
@@ -68,22 +97,23 @@ class DashboardController extends Controller
             ->get();
 
         // Daily harvest data for the last 30 days
-        $dailyHarvests = $this->getDailyHarvestData();
+        $dailyHarvests = $this->getDailyHarvestData(30, $dateFrom, $dateTo);
 
         // Harvest by variety
-        $harvestByVariety = Harvest::selectRaw('variety, SUM(quantity_kg) as total')
+        $harvestByVariety = (clone $harvestQuery)
+            ->selectRaw('variety, SUM(quantity_kg) as total')
             ->groupBy('variety')
             ->whereNotNull('variety')
             ->get();
 
         // === YIELD ANALYTICS ===
-        $yieldAnalytics = $this->getYieldAnalytics();
+        $yieldAnalytics = $this->getYieldAnalytics($dateFrom, $dateTo);
         
         // === CUSTOMER ANALYTICS ===
-        $customerAnalytics = $this->getCustomerAnalytics();
+        $customerAnalytics = $this->getCustomerAnalytics($dateFrom, $dateTo);
         
         // === COST ANALYTICS ===
-        $costAnalytics = $this->getCostAnalytics();
+        $costAnalytics = $this->getCostAnalytics($dateFrom, $dateTo);
 
         return view('dashboard', compact(
             'totalYield',
@@ -116,7 +146,7 @@ class DashboardController extends Controller
         ));
     }
 
-    private function getMonthlyData($table, $column, $months = 6)
+    private function getMonthlyData($table, $column, $months = 6, $dateFrom = null, $dateTo = null)
     {
         $data = [];
         $model = match($table) {
@@ -136,6 +166,14 @@ class DashboardController extends Controller
             $query = $model::whereYear($dateField, $date->year)
                 ->whereMonth($dateField, $date->month);
             
+            // Apply date range filters if provided
+            if ($dateFrom) {
+                $query->where($dateField, '>=', $dateFrom);
+            }
+            if ($dateTo) {
+                $query->where($dateField, '<=', $dateTo);
+            }
+            
             // For sales revenue, only count paid sales
             if ($table === 'sales' && $column === 'total_amount') {
                 $query->where('payment_status', 'paid');
@@ -152,14 +190,24 @@ class DashboardController extends Controller
         return collect($data);
     }
 
-    private function getDailyHarvestData($days = 30)
+    private function getDailyHarvestData($days = 30, $dateFrom = null, $dateTo = null)
     {
         $data = [];
         
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
-            $dailyHarvest = Harvest::whereDate('harvest_date', $date->toDateString())
-                ->sum('quantity_kg');
+            
+            $query = Harvest::whereDate('harvest_date', $date->toDateString());
+            
+            // Apply date range filters if provided
+            if ($dateFrom && $date->lt($dateFrom)) {
+                continue;
+            }
+            if ($dateTo && $date->gt($dateTo)) {
+                continue;
+            }
+            
+            $dailyHarvest = $query->sum('quantity_kg');
             
             $data[] = [
                 'date' => $date->format('M d'),
@@ -170,15 +218,23 @@ class DashboardController extends Controller
         return collect($data);
     }
 
-    private function getYieldAnalytics()
+    private function getYieldAnalytics($dateFrom = null, $dateTo = null)
     {
         // Monthly yield comparison
         $monthlyYieldComparison = [];
         for ($i = 11; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $yield = Harvest::whereYear('harvest_date', $date->year)
-                ->whereMonth('harvest_date', $date->month)
-                ->sum('quantity_kg');
+            $query = Harvest::whereYear('harvest_date', $date->year)
+                ->whereMonth('harvest_date', $date->month);
+            
+            if ($dateFrom) {
+                $query->where('harvest_date', '>=', $dateFrom);
+            }
+            if ($dateTo) {
+                $query->where('harvest_date', '<=', $dateTo);
+            }
+            
+            $yield = $query->sum('quantity_kg');
             
             $monthlyYieldComparison[] = [
                 'month' => $date->format('M Y'),
@@ -187,10 +243,18 @@ class DashboardController extends Controller
         }
 
         // Yield by variety with percentages
-        $yieldByVariety = Harvest::selectRaw('variety, SUM(quantity_kg) as total')
+        $yieldByVarietyQuery = Harvest::selectRaw('variety, SUM(quantity_kg) as total')
             ->groupBy('variety')
-            ->whereNotNull('variety')
-            ->get();
+            ->whereNotNull('variety');
+        
+        if ($dateFrom) {
+            $yieldByVarietyQuery->where('harvest_date', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $yieldByVarietyQuery->where('harvest_date', '<=', $dateTo);
+        }
+        
+        $yieldByVariety = $yieldByVarietyQuery->get();
 
         $totalYield = $yieldByVariety->sum('total');
         $yieldByVarietyWithPercentage = $yieldByVariety->map(function($item) use ($totalYield) {
@@ -455,4 +519,48 @@ class DashboardController extends Controller
             'totalCategories' => $costByCategory->count()
         ];
     }
+
+    // API endpoint for trends data
+    public function getTrendsData(Request $request)
+    {
+        $dateFrom = $request->filled('date_from') ? Carbon::parse($request->date_from) : null;
+        $dateTo = $request->filled('date_to') ? Carbon::parse($request->date_to) : null;
+        $trendsPeriod = $request->get('trends_period', 6);
+        
+        $monthlyRevenue = $this->getMonthlyData('sales', 'total_amount', $trendsPeriod, $dateFrom, $dateTo);
+        $monthlyCosts = $this->getMonthlyData('costs', 'amount', $trendsPeriod, $dateFrom, $dateTo);
+        $monthlyYield = $this->getMonthlyData('harvests', 'quantity_kg', $trendsPeriod, $dateFrom, $dateTo);
+        
+        $labels = $monthlyRevenue->pluck('month')->toArray();
+        $yieldData = $monthlyYield->pluck('value')->toArray();
+        $revenueData = $monthlyRevenue->pluck('value')->toArray();
+        $costsData = $monthlyCosts->pluck('value')->toArray();
+        
+        // Calculate net profit
+        $netProfitData = array_map(function($revenue, $cost) {
+            return $revenue - $cost;
+        }, $revenueData, $costsData);
+        
+        // Calculate averages
+        $avgYield = count($yieldData) > 0 ? round(array_sum($yieldData) / count($yieldData), 2) : 0;
+        $avgRevenue = count($revenueData) > 0 ? round(array_sum($revenueData) / count($revenueData), 0) : 0;
+        $avgCosts = count($costsData) > 0 ? round(array_sum($costsData) / count($costsData), 0) : 0;
+        $avgProfit = $avgRevenue - $avgCosts;
+        
+        return response()->json([
+            'labels' => $labels,
+            'yield' => $yieldData,
+            'revenue' => $revenueData,
+            'costs' => $costsData,
+            'netProfit' => $netProfitData,
+            'period' => $trendsPeriod,
+            'averages' => [
+                'yield' => $avgYield,
+                'revenue' => $avgRevenue,
+                'costs' => $avgCosts,
+                'netProfit' => $avgProfit
+            ]
+        ]);
+    }
 }
+

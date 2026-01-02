@@ -14,6 +14,7 @@ use App\Services\OpenAIService;
 
 // Dashboard - Main landing page
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/api/trends-data', [DashboardController::class, 'getTrendsData'])->name('dashboard.trends-data');
 
 // Resource routes for all modules
 Route::resource('harvests', HarvestController::class);

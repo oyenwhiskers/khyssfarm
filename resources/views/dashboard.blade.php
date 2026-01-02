@@ -1,37 +1,486 @@
 @extends('layouts.app')
 
+@section('styles')
+<style>
+    /* Dashboard Container */
+    .dashboard-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 1rem 0;
+    }
+    
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        margin-bottom: 1rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.15rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dashboard-subtitle {
+        color: #718096;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    
+    /* Date Filter Card */
+    .date-filter-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .date-filter-card:hover {
+        box-shadow: 0 3px 16px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .date-filter-card .form-label {
+        font-size: 0.9rem;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .date-filter-card .form-control {
+        border-radius: 6px;
+        border: 1px solid #cbd5e0;
+        transition: all 0.2s ease;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        height: 38px;
+    }
+    
+    .date-filter-card .form-control:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+    
+    .date-filter-card .btn {
+        height: 38px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Metric Cards */
+    .metric-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .metric-card:hover::before {
+        opacity: 1;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .metric-card .card-body {
+        padding: 1.25rem;
+    }
+    
+    .metric-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.35rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .metric-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        opacity: 0.95;
+        letter-spacing: 0.2px;
+    }
+    
+    .metric-icon {
+        font-size: 2rem;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover .metric-icon {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    
+    /* Business Stream Cards */
+    .business-stream-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .business-stream-card:hover {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        transform: translateY(-3px);
+    }
+    
+    .business-stream-card .card-header {
+        padding: 1rem 1.25rem;
+        border-bottom: none;
+    }
+    
+    .business-stream-card .card-header h5 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .business-stream-card .card-body {
+        padding: 1rem 1.25rem;
+    }
+    
+    .metric-box {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 10px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+        height: 100%;
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .metric-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    }
+    
+    .metric-box-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-box-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    
+    .metric-box-label {
+        font-size: 0.8rem;
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    /* Quick Action Buttons */
+    .quick-action-btn {
+        border-radius: 6px;
+        padding: 0.4rem 0.75rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+    
+    /* Alert Styling */
+    .alert-modern {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        padding: 1rem;
+    }
+    
+    /* Chart Cards */
+    .chart-card {
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .chart-card .card-header {
+        background: white;
+        border-bottom: 2px solid #f1f5f9;
+        border-radius: 12px 12px 0 0 !important;
+        padding: 1rem 1.25rem;
+    }
+    
+    .chart-card .card-body {
+        padding: 1rem 1.25rem;
+    }
+    
+    .chart-card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+    
+    /* Trend Indicators */
+    .trend-indicator {
+        background: white;
+        border-radius: 10px;
+        padding: 0.875rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+    }
+    
+    .trend-indicator:hover {
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+    
+    .trend-indicator h6 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .trend-indicator small {
+        font-size: 0.7rem;
+        color: #718096;
+    }
+    
+    /* Analytics Tabs */
+    .analytics-tabs .nav-link {
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #718096;
+        font-weight: 600;
+        padding: 0.625rem 1.25rem;
+        transition: all 0.3s ease;
+        border-radius: 0;
+        font-size: 0.9rem;
+    }
+    
+    .analytics-tabs .nav-link:hover {
+        color: #4299e1;
+        background: rgba(66, 153, 225, 0.05);
+    }
+    
+    .analytics-tabs .nav-link.active {
+        color: #2b6cb0;
+        border-bottom-color: #4299e1;
+        background: rgba(66, 153, 225, 0.08);
+    }
+    
+    /* Analytics Cards */
+    .analytics-card {
+        border-radius: 10px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .analytics-card:hover {
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+    
+    .analytics-card .card-header {
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .analytics-card .card-body {
+        padding: 1rem;
+    }
+    
+    /* Table Styling */
+    .analytics-table {
+        margin: 0;
+    }
+    
+    .analytics-table thead th {
+        background: #f8f9fa;
+        color: #4a5568;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 0.75rem 0.875rem;
+    }
+    
+    .analytics-table tbody tr {
+        transition: background 0.2s ease;
+    }
+    
+    .analytics-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .analytics-table tbody td {
+        padding: 0.75rem 0.875rem;
+        border-color: #f1f5f9;
+        vertical-align: middle;
+        font-size: 0.875rem;
+    }
+    
+    /* Badge Styling */
+    .badge-modern {
+        padding: 0.3rem 0.65rem;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        letter-spacing: 0.3px;
+    }
+    
+    /* Dropdown Styling */
+    .dropdown-toggle {
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
+    
+    .dropdown-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    
+    /* Section Spacing */
+    .row.mb-5 {
+        margin-bottom: 2rem !important;
+    }
+    
+    .row.mt-5 {
+        margin-top: 2rem !important;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .dashboard-title {
+            font-size: 1.25rem;
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+        }
+        
+        .metric-icon {
+            font-size: 1.75rem;
+        }
+        
+        .metric-card .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="container-fluid">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h2 mb-1 fw-bold">Farm Analytics Dashboard</h1>
-                    <p class="text-muted mb-0">Comprehensive overview of your agricultural business</p>
-                </div>
-                <div class="text-end">
-                    <div class="badge bg-primary fs-6 px-3 py-2">
-                        <i class="bi bi-calendar3 me-1"></i>
-                        {{ now()->format('F d, Y') }}
+<div class="container-fluid dashboard-container">
+    <!-- Header Section with Date Filter -->
+    <div class="row mb-3">
+        <div class="col-lg-8 mb-3">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-chart-line text-primary"></i>
+                    Farm Analytics Dashboard
+                </h1>
+                <p class="dashboard-subtitle">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Comprehensive overview of your agricultural business
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="date-filter-card p-3">
+                <form method="GET" action="{{ route('dashboard') }}" id="dashboardFilterForm">
+                    <label class="form-label fw-bold mb-2">
+                        <i class="fas fa-calendar-alt me-1 text-primary"></i>
+                        Date Range
+                    </label>
+                    <div class="row g-2">
+                        <div class="col-5">
+                            <input type="date" name="date_from" class="form-control" 
+                                   value="{{ request('date_from') }}" placeholder="From">
+                        </div>
+                        <div class="col-5">
+                            <input type="date" name="date_to" class="form-control" 
+                                   value="{{ request('date_to') }}" placeholder="To">
+                        </div>
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-primary w-100" title="Apply Filter">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                    @if(request('date_from') || request('date_to'))
+                    <div class="mt-2">
+                        <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times me-1"></i>Clear Filters
+                        </a>
+                    </div>
+                    @endif
+                </form>
             </div>
         </div>
     </div>
 
     <!-- Key Performance Indicators -->
-    <div class="row mb-5">
+    <div class="row mb-3">
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm bg-success">
+            <div class="card border-0 metric-card" style="background: linear-gradient(135deg, #28a745, #20c997);">
                 <div class="card-body text-white">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h2 class="fw-bold mb-1">RM{{ number_format($totalRevenue, 2) }}</h2>
-                            <p class="mb-0 opacity-75">Total Revenue</p>
+                            <div class="metric-value">RM{{ number_format($totalRevenue, 2) }}</div>
+                            <p class="metric-label mb-0">
+                                <i class="fas fa-arrow-up me-1"></i>
+                                Total Revenue
+                            </p>
                         </div>
-                        <div class="fs-1 opacity-75">
-                            <i class="bi bi-graph-up-arrow"></i>
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
                 </div>
@@ -39,15 +488,18 @@
         </div>
         
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm bg-danger">
+            <div class="card border-0 metric-card" style="background: linear-gradient(135deg, #dc3545, #e76f7c);">
                 <div class="card-body text-white">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h2 class="fw-bold mb-1">RM{{ number_format($totalAllCosts, 2) }}</h2>
-                            <p class="mb-0 opacity-75">Total Costs</p>
+                            <div class="metric-value">RM{{ number_format($totalAllCosts, 2) }}</div>
+                            <p class="metric-label mb-0">
+                                <i class="fas fa-arrow-down me-1"></i>
+                                Total Costs
+                            </p>
                         </div>
-                        <div class="fs-1 opacity-75">
-                            <i class="bi bi-receipt-cutoff"></i>
+                        <div class="metric-icon">
+                            <i class="fas fa-receipt"></i>
                         </div>
                     </div>
                 </div>
@@ -55,15 +507,18 @@
         </div>
         
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm bg-primary">
+            <div class="card border-0 metric-card" style="background: linear-gradient(135deg, #007bff, #4da3ff);">
                 <div class="card-body text-white">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h2 class="fw-bold mb-1">RM{{ number_format($grandTotalProfit, 2) }}</h2>
-                            <p class="mb-0 opacity-75">Net Profit</p>
+                            <div class="metric-value">RM{{ number_format($grandTotalProfit, 2) }}</div>
+                            <p class="metric-label mb-0">
+                                <i class="fas fa-trophy me-1"></i>
+                                Net Profit
+                            </p>
                         </div>
-                        <div class="fs-1 opacity-75">
-                            <i class="bi bi-trophy-fill"></i>
+                        <div class="metric-icon">
+                            <i class="fas fa-coins"></i>
                         </div>
                     </div>
                 </div>
@@ -71,189 +526,18 @@
         </div>
         
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #e91e63, #f06292);">
+            <div class="card border-0 metric-card" style="background: linear-gradient(135deg, #e91e63, #f06292);">
                 <div class="card-body text-white">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h2 class="fw-bold mb-1">{{ number_format($totalRevenue > 0 ? ($grandTotalProfit / $totalRevenue) * 100 : 0, 1) }}%</h2>
-                            <p class="mb-0 opacity-75">Profit Margin</p>
+                            <div class="metric-value">{{ number_format($totalRevenue > 0 ? ($grandTotalProfit / $totalRevenue) * 100 : 0, 1) }}%</div>
+                            <p class="metric-label mb-0">
+                                <i class="fas fa-percent me-1"></i>
+                                Profit Margin
+                            </p>
                         </div>
-                        <div class="fs-1 opacity-75">
-                            <i class="bi bi-percent"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Business Streams -->
-    <div class="row">
-        <!-- Farm Production -->
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-primary text-white border-0 py-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h5 class="mb-1 fw-bold">
-                                <i class="bi bi-house-fill me-2"></i>
-                                Farm Production
-                            </h5>
-                            <p class="mb-0 opacity-75 small">Your own agricultural produce</p>
-                        </div>
-                        <a href="{{ route('harvests.index') }}" class="btn btn-light btn-sm">
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <!-- Farm Yield -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-primary mb-2">
-                                    <i class="bi bi-award-fill fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-dark mb-1">{{ number_format($totalYield, 2) }}</h3>
-                                <p class="text-muted mb-0 small">kg Harvested</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Farm Revenue -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-success mb-2">
-                                    <i class="bi bi-currency-dollar fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-success mb-1">{{ number_format($farmRevenue, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Revenue</p>
-                                @if($pendingRevenue > 0)
-                                    <div class="mt-1">
-                                        <span class="badge bg-warning text-dark small">
-                                            +{{ number_format($pendingRevenue, 2) }} pending
-                                        </span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Farm Costs -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-danger mb-2">
-                                    <i class="bi bi-receipt fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-danger mb-1">{{ number_format($totalCosts, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Costs</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Farm Profit -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-info mb-2">
-                                    <i class="bi bi-graph-up fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-info mb-1">{{ number_format($farmProfit, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Profit</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="border-top pt-3 mt-4">
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="{{ route('harvests.create') }}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-plus-circle me-1"></i> New Harvest
-                            </a>
-                            <a href="{{ route('sales.create') }}" class="btn btn-success btn-sm">
-                                <i class="bi bi-cash me-1"></i> Record Sale
-                            </a>
-                            <a href="{{ route('costs.create') }}" class="btn btn-outline-danger btn-sm">
-                                <i class="bi bi-receipt me-1"></i> Add Cost
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Resell Business -->
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-success text-white border-0 py-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h5 class="mb-1 fw-bold">
-                                <i class="bi bi-shop me-2"></i>
-                                Resell Business
-                            </h5>
-                            <p class="mb-0 opacity-75 small">Trading purchased chilies</p>
-                        </div>
-                        <a href="{{ route('resells.index') }}" class="btn btn-light btn-sm">
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <!-- Resell Inventory -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-primary mb-2">
-                                    <i class="bi bi-box-seam-fill fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-dark mb-1">{{ number_format($resellYield, 2) }}</h3>
-                                <p class="text-muted mb-0 small">kg Purchased</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Resell Revenue -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-success mb-2">
-                                    <i class="bi bi-cash-stack fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-success mb-1">{{ number_format($resellRevenue, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Revenue</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Purchase Costs -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-danger mb-2">
-                                    <i class="bi bi-cart-check-fill fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-danger mb-1">{{ number_format($resellPurchaseCosts, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Purchase Cost</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Resell Profit -->
-                        <div class="col-6">
-                            <div class="text-center p-3 bg-light rounded-3">
-                                <div class="text-info mb-2">
-                                    <i class="bi bi-arrow-up-circle-fill fs-2"></i>
-                                </div>
-                                <h3 class="fw-bold text-info mb-1">{{ number_format($resellProfit, 2) }}</h3>
-                                <p class="text-muted mb-0 small">RM Profit</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="border-top pt-3 mt-4">
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="{{ route('resells.create') }}" class="btn btn-success btn-sm">
-                                <i class="bi bi-plus-circle me-1"></i> New Purchase
-                            </a>
-                            <a href="{{ route('resells.index') }}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-eye me-1"></i> View Inventory
-                            </a>
-                            <a href="{{ route('customers.index') }}" class="btn btn-outline-info btn-sm">
-                                <i class="bi bi-people me-1"></i> Customers
-                            </a>
+                        <div class="metric-icon">
+                            <i class="fas fa-percentage"></i>
                         </div>
                     </div>
                 </div>
@@ -263,20 +547,23 @@
 
     <!-- Outstanding Payments Alert -->
     @if($pendingRevenue > 0)
-    <div class="row">
+    <div class="row my-3">
         <div class="col-12">
-            <div class="alert alert-warning border-0 shadow-sm" role="alert">
+            <div class="alert alert-warning alert-modern" role="alert">
                 <div class="d-flex align-items-center">
                     <div class="me-3">
-                        <i class="bi bi-exclamation-triangle-fill fs-3 text-warning"></i>
+                        <i class="fas fa-exclamation-triangle fs-3"></i>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">Outstanding Payments</h6>
+                        <h6 class="mb-1 fw-bold">
+                            <i class="fas fa-bell me-1"></i>
+                            Outstanding Payments
+                        </h6>
                         <p class="mb-0">You have <strong>RM{{ number_format($pendingRevenue, 2) }}</strong> in pending payments that need attention.</p>
                     </div>
                     <div>
-                        <a href="{{ route('sales.index', ['payment_status' => 'pending']) }}" class="btn btn-warning">
-                            <i class="bi bi-eye me-1"></i> View Pending Sales
+                        <a href="{{ route('sales.index', ['payment_status' => 'pending']) }}" class="btn btn-warning quick-action-btn">
+                            <i class="fas fa-eye me-1"></i> View Pending Sales
                         </a>
                     </div>
                 </div>
@@ -284,32 +571,211 @@
         </div>
     </div>
     @endif
+
+    <!-- Business Streams -->
+    <div class="row">
+        <!-- Farm Production -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 business-stream-card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="fas fa-tractor me-2"></i>
+                                Farm Production
+                            </h5>
+                            <p class="mb-0 opacity-75 small">Your own agricultural produce</p>
+                        </div>
+                        <a href="{{ route('harvests.index') }}" class="btn btn-light btn-sm quick-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <!-- Farm Yield -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-primary">
+                                    <i class="fas fa-weight"></i>
+                                </div>
+                                <div class="metric-box-value text-dark">{{ number_format($totalYield, 2) }}</div>
+                                <p class="metric-box-label mb-0">kg Harvested</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Farm Revenue -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-success">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="metric-box-value text-success">{{ number_format($farmRevenue, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Revenue</p>
+                                @if($pendingRevenue > 0)
+                                    <div class="mt-2">
+                                        <span class="badge badge-modern bg-warning text-dark">
+                                            <i class="fas fa-clock"></i> +{{ number_format($pendingRevenue, 2) }} pending
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Farm Costs -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-danger">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <div class="metric-box-value text-danger">{{ number_format($totalCosts, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Costs</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Farm Profit -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-info">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="metric-box-value text-info">{{ number_format($farmProfit, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Profit</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="border-top pt-3 mt-4">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('harvests.create') }}" class="btn btn-primary btn-sm quick-action-btn">
+                                <i class="fas fa-plus-circle me-1"></i> New Harvest
+                            </a>
+                            <a href="{{ route('sales.create') }}" class="btn btn-success btn-sm quick-action-btn">
+                                <i class="fas fa-cash-register me-1"></i> Record Sale
+                            </a>
+                            <a href="{{ route('costs.create') }}" class="btn btn-outline-danger btn-sm quick-action-btn">
+                                <i class="fas fa-receipt me-1"></i> Add Cost
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resell Business -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 business-stream-card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="fas fa-store me-2"></i>
+                                Resell Business
+                            </h5>
+                            <p class="mb-0 opacity-75 small">Trading purchased chilies</p>
+                        </div>
+                        <a href="{{ route('resells.index') }}" class="btn btn-light btn-sm quick-action-btn">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <!-- Resell Inventory -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-primary">
+                                    <i class="fas fa-boxes"></i>
+                                </div>
+                                <div class="metric-box-value text-dark">{{ number_format($resellYield, 2) }}</div>
+                                <p class="metric-box-label mb-0">kg Purchased</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Resell Revenue -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-success">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="metric-box-value text-success">{{ number_format($resellRevenue, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Revenue</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Purchase Costs -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-danger">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="metric-box-value text-danger">{{ number_format($resellPurchaseCosts, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Purchase Cost</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Resell Profit -->
+                        <div class="col-6">
+                            <div class="metric-box text-center">
+                                <div class="metric-box-icon text-info">
+                                    <i class="fas fa-arrow-circle-up"></i>
+                                </div>
+                                <div class="metric-box-value text-info">{{ number_format($resellProfit, 2) }}</div>
+                                <p class="metric-box-label mb-0">RM Profit</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="border-top pt-3 mt-4">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('resells.create') }}" class="btn btn-success btn-sm quick-action-btn">
+                                <i class="fas fa-plus-circle me-1"></i> New Purchase
+                            </a>
+                            <a href="{{ route('resells.index') }}" class="btn btn-primary btn-sm quick-action-btn">
+                                <i class="fas fa-eye me-1"></i> View Inventory
+                            </a>
+                            <a href="{{ route('customers.index') }}" class="btn btn-outline-info btn-sm quick-action-btn">
+                                <i class="fas fa-users me-1"></i> Customers
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Monthly Trends Section -->
-    <div class="row mt-5">
+    <div class="row mt-3">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center mb-4">
+            <div class="card border-0 chart-card">
+                <div class="card-header">
+                    <div class="row align-items-center">
                         <div class="col">
-                            <h5 class="card-title mb-0 fw-bold text-dark">
-                                <i class="bi bi-graph-up-arrow text-primary me-2"></i>Monthly Trends
+                            <h5 class="chart-card-title mb-0">
+                                <i class="fas fa-chart-area text-primary me-2"></i>Monthly Trends
                             </h5>
-                            <p class="text-muted mb-0 small">6-month performance overview</p>
+                            <p class="text-muted mb-0 small mt-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                6-month performance overview
+                            </p>
                         </div>
                         <div class="col-auto">
                             <div class="dropdown">
-                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-calendar3 me-1"></i>Last 6 Months
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" id="trendsPeriodBtn">
+                                    <i class="fas fa-calendar-alt me-1"></i><span id="trendsPeriodLabel">Last 6 Months</span>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Last 3 Months</a></li>
-                                    <li><a class="dropdown-item active" href="#">Last 6 Months</a></li>
-                                    <li><a class="dropdown-item" href="#">Last 12 Months</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item trends-period-filter" href="#" data-period="3"><i class="fas fa-calendar me-2"></i>Last 3 Months</a></li>
+                                    <li><a class="dropdown-item trends-period-filter active" href="#" data-period="6"><i class="fas fa-calendar-check me-2"></i>Last 6 Months</a></li>
+                                    <li><a class="dropdown-item trends-period-filter" href="#" data-period="12"><i class="fas fa-calendar-week me-2"></i>Last 12 Months</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="card-body">
                     
                     <div class="row">
                         <div class="col-12">
@@ -320,50 +786,48 @@
                     </div>
                     
                     <!-- Trend Indicators -->
-                    <div class="row mt-4">
+                    <div class="row mt-4 g-3">
                         <div class="col-md-3 col-6">
-                            <div class="text-center p-3 bg-light rounded">
+                            <div class="trend-indicator text-center">
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <div class="rounded-circle p-2 me-2" style="width: 12px; height: 12px; background-color: rgb(251, 191, 36) !important;"></div>
                                     <span class="fw-bold small" style="color: rgb(251, 191, 36);">Yield</span>
                                 </div>
-                                <span class="text-muted small">Last 6 months average</span>
-                                <h6 class="mb-0 fw-bold">{{ number_format($monthlyYield->avg('value'), 0) }} kg</h6>
+                                <small class="d-block">Last 6 months average</small>
+                                <h6 class="mt-2">{{ number_format($monthlyYield->avg('value'), 0) }} kg</h6>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="text-center p-3 bg-light rounded">
+                            <div class="trend-indicator text-center">
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <div class="rounded-circle p-2 me-2" style="width: 12px; height: 12px; background-color: rgb(34, 197, 94) !important;"></div>
                                     <span class="fw-bold small" style="color: rgb(34, 197, 94);">Revenue</span>
                                 </div>
-                                <span class="text-muted small">Last 6 months average</span>
-                                <h6 class="mb-0 fw-bold">RM{{ number_format($monthlyRevenue->avg('value'), 0) }}</h6>
+                                <small class="d-block">Last 6 months average</small>
+                                <h6 class="mt-2">RM{{ number_format($monthlyRevenue->avg('value'), 0) }}</h6>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="text-center p-3 bg-light rounded">
+                            <div class="trend-indicator text-center">
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <div class="rounded-circle p-2 me-2" style="width: 12px; height: 12px; background-color: rgb(239, 68, 68) !important;"></div>
                                     <span class="fw-bold small" style="color: rgb(239, 68, 68);">Costs</span>
                                 </div>
-                                <span class="text-muted small">Last 6 months average</span>
-                                <h6 class="mb-0 fw-bold">RM{{ number_format($monthlyCosts->avg('value'), 0) }}</h6>
+                                <small class="d-block">Last 6 months average</small>
+                                <h6 class="mt-2">RM{{ number_format($monthlyCosts->avg('value'), 0) }}</h6>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="text-center p-3 bg-light rounded">
+                            <div class="trend-indicator text-center">
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <div class="rounded-circle p-2 me-2" style="width: 12px; height: 12px; background-color: rgb(59, 130, 246) !important;"></div>
                                     <span class="fw-bold small" style="color: rgb(59, 130, 246);">Net Profit</span>
                                 </div>
-                                <span class="text-muted small">Last 6 months average</span>
+                                <small class="d-block">Last 6 months average</small>
                                 @php
                                     $avgProfit = $monthlyRevenue->avg('value') - $monthlyCosts->avg('value');
                                 @endphp
-                                <h6 class="mb-0 fw-bold">
-                                    RM{{ number_format($avgProfit, 0) }}
-                                </h6>
+                                <h6 class="mt-2">RM{{ number_format($avgProfit, 0) }}</h6>
                             </div>
                         </div>
                     </div>
@@ -375,36 +839,36 @@
     <!-- Analytics Tabs Section -->
     <div class="row mt-5">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 chart-card">
                 <div class="card-body">
                     <!-- Nav tabs -->
-                    <ul class="nav nav-tabs border-0 mb-4" id="analyticsTabs" role="tablist">
+                    <ul class="nav nav-tabs analytics-tabs mb-4" id="analyticsTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active fw-bold text-primary border-0 border-bottom border-primary" 
                                     id="yield-tab" data-bs-toggle="tab" data-bs-target="#yield" type="button" 
                                     role="tab" aria-controls="yield" aria-selected="true">
-                                <i class="bi bi-bar-chart-line me-2"></i>Yield Analytics
+                                <i class="fas fa-chart-bar me-2"></i>Yield Analytics
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link fw-bold text-muted border-0" 
                                     id="cost-tab" data-bs-toggle="tab" data-bs-target="#cost" type="button" 
                                     role="tab" aria-controls="cost" aria-selected="false">
-                                <i class="bi bi-wallet2 me-2"></i>Cost Analytics
+                                <i class="fas fa-wallet me-2"></i>Cost Analytics
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link fw-bold text-muted border-0" 
                                     id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer" type="button" 
                                     role="tab" aria-controls="customer" aria-selected="false">
-                                <i class="bi bi-people me-2"></i>Customer Analytics
+                                <i class="fas fa-users me-2"></i>Customer Analytics
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link fw-bold text-muted border-0" 
                                     id="trends-tab" data-bs-toggle="tab" data-bs-target="#trends" type="button" 
                                     role="tab" aria-controls="trends" aria-selected="false">
-                                <i class="bi bi-graph-up me-2"></i>Market Trends
+                                <i class="fas fa-chart-line me-2"></i>Market Trends
                             </button>
                         </li>
                     </ul>
@@ -413,40 +877,43 @@
                     <div class="tab-content" id="analyticsTabContent">
                         <!-- Yield Analytics Tab -->
                         <div class="tab-pane fade show active" id="yield" role="tabpanel" aria-labelledby="yield-tab">
-                            <div class="row">
-                                <!-- Monthly Yield Trends -->
-                                <div class="col-lg-8 mb-4">
-                                    <div class="card border-0 bg-light">
-                                        <div class="card-header bg-success text-white">
-                                            <h6 class="mb-0"><i class="bi bi-calendar3 me-2"></i>Monthly Yield Trends</h6>
+                            <!-- Monthly Yield Trends - Highlighted -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card border-0 analytics-card">
+                                        <div class="card-header text-white" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                            <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Monthly Yield Trends</h6>
                                         </div>
                                         <div class="card-body">
-                                            <canvas id="monthlyYieldChart" height="100"></canvas>
+                                            <canvas id="monthlyYieldChart" height="200"></canvas>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
+                            <!-- Secondary Analytics - 3 Columns -->
+                            <div class="row">
                                 <!-- Variety Distribution -->
-                                <div class="col-lg-4 mb-4">
-                                    <div class="card border-0 bg-light">
-                                        <div class="card-header bg-info text-white">
-                                            <h6 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Variety Distribution</h6>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="card border-0 analytics-card h-100">
+                                        <div class="card-header text-white" style="background: linear-gradient(135deg, #17a2b8, #20c997);">
+                                            <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Variety Distribution</h6>
                                         </div>
                                         <div class="card-body">
-                                            <canvas id="varietyChart" height="150"></canvas>
+                                            <canvas id="varietyChart" height="260"></canvas>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Recent Harvests -->
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card border-0 bg-light">
-                                        <div class="card-header bg-primary text-white">
-                                            <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Harvests</h6>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="card border-0 analytics-card h-100">
+                                        <div class="card-header text-white" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                                            <h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Harvests</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
-                                                <table class="table table-sm">
+                                                <table class="table table-sm analytics-table mb-0">
                                                     <thead>
                                                         <tr>
                                                             <th>Date</th>
@@ -462,7 +929,7 @@
                                                             <td>{{ $harvest->variety ?? 'Mixed' }}</td>
                                                             <td>{{ number_format($harvest->quantity_kg, 1) }} kg</td>
                                                             <td>
-                                                                <span class="badge bg-{{ $harvest->quality_grade == 'Premium' ? 'success' : ($harvest->quality_grade == 'Grade A' ? 'primary' : 'secondary') }}">
+                                                                <span class="badge badge-modern bg-{{ $harvest->quality_grade == 'Premium' ? 'success' : ($harvest->quality_grade == 'Grade A' ? 'primary' : 'secondary') }}">
                                                                     {{ $harvest->quality_grade ?? 'Standard' }}
                                                                 </span>
                                                             </td>
@@ -476,17 +943,17 @@
                                 </div>
 
                                 <!-- Harvest Trends -->
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card border-0 bg-light">
-                                        <div class="card-header bg-warning text-dark">
-                                            <h6 class="mb-0"><i class="bi bi-calendar-date me-2"></i>Harvest Trends</h6>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="card border-0 analytics-card h-100">
+                                        <div class="card-header text-white" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
+                                            <h6 class="mb-0"><i class="fas fa-calendar-day me-2"></i>Harvest Trends</h6>
                                         </div>
                                         <div class="card-body">
                                             @if($yieldAnalytics['dailyHarvestTrends']->count() > 0)
-                                                <canvas id="weeklyYieldChart" height="150"></canvas>
+                                                <canvas id="weeklyYieldChart" height="260"></canvas>
                                             @else
                                                 <div class="text-center py-4">
-                                                    <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
+                                                    <i class="fas fa-calendar-times text-muted" style="font-size: 2rem;"></i>
                                                     <p class="text-muted mt-2 mb-0">No harvest data in the last 30 days</p>
                                                     <small class="text-muted">Add harvest records to see trends</small>
                                                 </div>
@@ -504,10 +971,10 @@
                                 <div class="col-lg-8 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-danger text-white">
-                                            <h6 class="mb-0"><i class="bi bi-graph-down me-2"></i>Monthly Cost vs Revenue</h6>
+                                            <h6 class="mb-0"><i class="fas fa-chart-area me-2"></i>Monthly Cost vs Revenue</h6>
                                         </div>
                                         <div class="card-body">
-                                            <canvas id="costRevenueChart" height="100"></canvas>
+                                            <canvas id="costRevenueChart" height="250"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -516,40 +983,44 @@
                                 <div class="col-lg-4 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-secondary text-white">
-                                            <h6 class="mb-0"><i class="bi bi-pie-chart-fill me-2"></i>Cost Categories</h6>
+                                            <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Cost Categories</h6>
                                         </div>
                                         <div class="card-body">
-                                            <canvas id="costBreakdownChart" height="150"></canvas>
+                                            <div style="height: 365px; position: relative;">
+                                                <canvas id="costBreakdownChart"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Recent Expenses -->
                                 <div class="col-lg-12 mb-4">
-                                    <div class="card border-0 bg-light">
-                                        <div class="card-header bg-dark text-white">
-                                            <h6 class="mb-0"><i class="bi bi-receipt me-2"></i>Recent Expenses</h6>
+                                    <div class="card border-0 analytics-card">
+                                        <div class="card-header text-white" style="background: linear-gradient(135deg, #343a40, #495057);">
+                                            <h6 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Recent Expenses</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
-                                                <table class="table table-sm">
+                                                <table class="table analytics-table mb-0">
                                                     <thead>
                                                         <tr>
-                                                            <th>Date</th>
-                                                            <th>Category</th>
-                                                            <th>Description</th>
-                                                            <th>Amount</th>
+                                                            <th style="width: 12%;">DATE</th>
+                                                            <th style="width: 18%;">CATEGORY</th>
+                                                            <th style="width: 50%;">DESCRIPTION</th>
+                                                            <th style="width: 20%;" class="text-end">AMOUNT</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @foreach($recentCosts as $cost)
                                                         <tr>
-                                                            <td>{{ $cost->date->format('M d') }}</td>
+                                                            <td class="fw-semibold text-muted">{{ $cost->date->format('M d') }}</td>
                                                             <td>
-                                                                <span class="badge bg-secondary">{{ $cost->category }}</span>
+                                                                <span class="badge badge-modern bg-secondary">{{ ucfirst($cost->category) }}</span>
                                                             </td>
-                                                            <td>{{ $cost->description }}</td>
-                                                            <td class="text-end fw-bold text-danger">RM{{ number_format($cost->amount, 2) }}</td>
+                                                            <td class="text-muted">{{ $cost->description }}</td>
+                                                            <td class="text-end">
+                                                                <span class="fw-bold text-danger">RM{{ number_format($cost->amount, 2) }}</span>
+                                                            </td>
                                                         </tr>
                                                         @endforeach
                                                     </tbody>
@@ -568,7 +1039,7 @@
                                 <div class="col-lg-6 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-success text-white">
-                                            <h6 class="mb-0"><i class="bi bi-person-plus me-2"></i>Customer Growth</h6>
+                                            <h6 class="mb-0"><i class="fas fa-user-plus me-2"></i>Customer Growth</h6>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="customerGrowthChart" height="120"></canvas>
@@ -580,7 +1051,7 @@
                                 <div class="col-lg-6 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-info text-white">
-                                            <h6 class="mb-0"><i class="bi bi-people-fill me-2"></i>Customer Types</h6>
+                                            <h6 class="mb-0"><i class="fas fa-users me-2"></i>Customer Types</h6>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="customerTypeChart" height="120"></canvas>
@@ -592,7 +1063,7 @@
                                 <div class="col-lg-6 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-warning text-dark">
-                                            <h6 class="mb-0"><i class="bi bi-trophy me-2"></i>Top Customers</h6>
+                                            <h6 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Customers</h6>
                                         </div>
                                         <div class="card-body">
                                             @foreach($topCustomers as $customer)
@@ -614,7 +1085,7 @@
                                 <div class="col-lg-6 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-primary text-white">
-                                            <h6 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Geographic Distribution</h6>
+                                            <h6 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Geographic Distribution</h6>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="locationChart" height="120"></canvas>
@@ -631,7 +1102,7 @@
                                 <div class="col-lg-8 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-primary text-white">
-                                            <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Market Channel Distribution</h6>
+                                            <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Market Channel Distribution</h6>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="channelDistributionChart" height="100"></canvas>
@@ -643,7 +1114,7 @@
                                 <div class="col-lg-4 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-info text-white">
-                                            <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Channel Performance</h6>
+                                            <h6 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Channel Performance</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="mb-3">
@@ -688,7 +1159,7 @@
                                 <div class="col-lg-12 mb-4">
                                     <div class="card border-0 bg-light">
                                         <div class="card-header bg-primary text-white">
-                                            <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Sales Activity</h6>
+                                            <h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Sales Activity</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
@@ -734,6 +1205,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
+// Global chart instance for monthly trends
+let monthlyTrendsChartInstance = null;
+
 // Chart configurations
 const chartOptions = {
     responsive: true,
@@ -1244,7 +1718,7 @@ new Chart(channelDistributionCtx, {
 // Cost Breakdown Chart
 const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
 new Chart(costBreakdownCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
         labels: [
             @foreach($costAnalytics['categoryBreakdown'] as $category)
@@ -1252,6 +1726,7 @@ new Chart(costBreakdownCtx, {
             @endforeach
         ],
         datasets: [{
+            label: 'Total Cost (RM)',
             data: [
                 @foreach($costAnalytics['categoryBreakdown'] as $category)
                 {{ $category->total }},
@@ -1273,24 +1748,58 @@ new Chart(costBreakdownCtx, {
                 'rgb(196, 181, 253)',  // Light Purple
                 'rgb(254, 240, 138)',  // Light Yellow
                 'rgb(156, 163, 175)'   // Gray
-            ]
+            ],
+            borderColor: [
+                'rgb(220, 38, 38)',
+                'rgb(217, 119, 6)',
+                'rgb(22, 163, 74)',
+                'rgb(37, 99, 235)',
+                'rgb(126, 34, 206)',
+                'rgb(190, 24, 93)',
+                'rgb(2, 132, 199)',
+                'rgb(101, 51, 15)',
+                'rgb(220, 38, 38)',
+                'rgb(8, 145, 178)',
+                'rgb(220, 38, 38)',
+                'rgb(16, 185, 129)',
+                'rgb(108, 92, 231)',
+                'rgb(202, 138, 4)',
+                'rgb(107, 114, 128)'
+            ],
+            borderWidth: 1
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'bottom'
+                display: true,
+                position: 'top'
             },
             tooltip: {
                 callbacks: {
                     label: function(context) {
-                        const label = context.label;
-                        const value = context.parsed;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return `${label}: RM${value.toLocaleString()} (${percentage}%)`;
+                        const value = context.parsed.x;
+                        return `Total Cost: RM${value.toLocaleString()}`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'RM' + value.toLocaleString();
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 11
                     }
                 }
             }
@@ -1300,7 +1809,7 @@ new Chart(costBreakdownCtx, {
 
 // Monthly Trends Chart
 const monthlyTrendsCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
-new Chart(monthlyTrendsCtx, {
+monthlyTrendsChartInstance = new Chart(monthlyTrendsCtx, {
     type: 'line',
     data: {
         labels: [
@@ -1529,4 +2038,111 @@ document.addEventListener('DOMContentLoaded', function() {
     transform: translateY(-1px);
 }
 </style>
+
+<script>
+// Monthly Trends Period Filter
+document.querySelectorAll('.trends-period-filter').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const period = this.getAttribute('data-period');
+        const periodLabels = {
+            3: 'Last 3 Months',
+            6: 'Last 6 Months',
+            12: 'Last 12 Months'
+        };
+        
+        // Update button label
+        document.getElementById('trendsPeriodLabel').textContent = periodLabels[period];
+        
+        // Update active state
+        document.querySelectorAll('.trends-period-filter').forEach(item => {
+            item.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Fetch updated chart data via AJAX
+        fetchMonthlyTrendsData(period);
+    });
+});
+
+// Fetch Monthly Trends Data
+function fetchMonthlyTrendsData(period) {
+    const dateFrom = new URLSearchParams(window.location.search).get('date_from');
+    const dateTo = new URLSearchParams(window.location.search).get('date_to');
+    
+    let url = `{{ route('dashboard.trends-data') }}?trends_period=${period}`;
+    if (dateFrom) url += `&date_from=${dateFrom}`;
+    if (dateTo) url += `&date_to=${dateTo}`;
+    
+    console.log('Fetching trends data from:', url);
+    
+    fetch(url)
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data received:', data);
+            updateMonthlyTrendsChart(data);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// Update Monthly Trends Chart
+function updateMonthlyTrendsChart(data) {
+    console.log('Updating chart with data:', data);
+    
+    if (monthlyTrendsChartInstance) {
+        // Update labels
+        monthlyTrendsChartInstance.data.labels = data.labels;
+        
+        // Update each dataset
+        if (monthlyTrendsChartInstance.data.datasets[0]) {
+            monthlyTrendsChartInstance.data.datasets[0].data = data.yield;
+        }
+        if (monthlyTrendsChartInstance.data.datasets[1]) {
+            monthlyTrendsChartInstance.data.datasets[1].data = data.revenue;
+        }
+        if (monthlyTrendsChartInstance.data.datasets[2]) {
+            monthlyTrendsChartInstance.data.datasets[2].data = data.costs;
+        }
+        if (monthlyTrendsChartInstance.data.datasets[3]) {
+            monthlyTrendsChartInstance.data.datasets[3].data = data.netProfit;
+        }
+        
+        // Force chart update with animation
+        monthlyTrendsChartInstance.update('active');
+        console.log('Chart updated successfully');
+        console.log('Chart instance:', monthlyTrendsChartInstance);
+    } else {
+        console.log('Chart instance not found');
+    }
+    
+    // Update trend indicators
+    updateTrendIndicators(data.period, data.averages);
+}
+
+// Update Trend Indicators
+function updateTrendIndicators(period, averages) {
+    const periodLabels = {
+        3: 'Last 3 months average',
+        6: 'Last 6 months average',
+        12: 'Last 12 months average'
+    };
+    
+    document.querySelectorAll('small.d-block').forEach((elem, index) => {
+        if (elem.textContent.includes('Last')) {
+            elem.textContent = periodLabels[period];
+        }
+    });
+    
+    // Update values
+    const indicators = document.querySelectorAll('.trend-indicator h6');
+    if (indicators[0]) indicators[0].textContent = averages.yield + ' kg';
+    if (indicators[1]) indicators[1].textContent = 'RM' + averages.revenue;
+    if (indicators[2]) indicators[2].textContent = 'RM' + averages.costs;
+    if (indicators[3]) indicators[3].textContent = 'RM' + averages.netProfit;
+}
+</script>
 @endsection

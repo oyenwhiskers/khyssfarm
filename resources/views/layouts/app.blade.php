@@ -9,23 +9,133 @@
     <style>
         .sidebar {
             min-height: 100vh;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            background: linear-gradient(180deg, #1e7e34 0%, #28a745 50%, #20c997 100%);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
         }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.85);
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin: 4px 8px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            font-size: 14px;
-            line-height: 1.3;
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background: rgba(255,255,255,0.2);
+        
+        .sidebar-header {
+            position: relative;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.15);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-brand {
             color: white;
-            transform: translateX(5px);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar-brand i {
+            font-size: 1.75rem;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .sidebar .nav {
+            padding: 0 0.75rem;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.9);
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin: 6px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.4;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: white;
+            border-radius: 0 4px 4px 0;
+            transition: height 0.3s ease;
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .sidebar .nav-link:hover::before {
+            height: 60%;
+        }
+        
+        .sidebar .nav-link:hover i {
+            transform: scale(1.15);
+        }
+        
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+        
+        .sidebar .nav-link.active::before {
+            height: 70%;
+        }
+        
+        .sidebar .nav-link.active i {
+            transform: scale(1.2);
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-footer small {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.75rem;
         }
         .main-content {
             background-color: #f8f9fa;
@@ -182,35 +292,45 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 px-0 sidebar">
-                <div class="p-3">
-                    <h5 class="text-white mb-3">
-                        <i class="fas fa-pepper-hot me-2"></i>
-                        KHYSS Farm
-                    </h5>
+                <div class="sidebar-header">
+                    <div class="sidebar-brand">
+                        <i class="fas fa-pepper-hot"></i>
+                        <span>KHYSS Farm</span>
+                    </div>
+                </div>
+                <div class="sidebar-content">
                     <nav class="nav flex-column">
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('harvests.*') ? 'active' : '' }}" href="{{ route('harvests.index') }}">
-                            <i class="fas fa-seedling me-2"></i> Harvest Records
+                            <i class="fas fa-seedling"></i>
+                            <span>Harvest Records</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}">
-                            <i class="fas fa-shopping-cart me-2"></i> Sales Tracking
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Sales Tracking</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}" href="{{ route('customers.index') }}">
-                            <i class="fas fa-users me-2"></i> Customers
+                            <i class="fas fa-users"></i>
+                            <span>Customers</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('costs.*') ? 'active' : '' }}" href="{{ route('costs.index') }}">
-                            <i class="fas fa-coins me-2"></i> Cost Management
+                            <i class="fas fa-coins"></i>
+                            <span>Cost Management</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('prices.*') ? 'active' : '' }}" href="{{ route('prices.index') }}">
-                            <i class="fas fa-tags me-2"></i> Pricing
+                            <i class="fas fa-tags"></i>
+                            <span>Pricing</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('marketing.*') ? 'active' : '' }}" href="{{ route('marketing.index') }}">
-                            <i class="fas fa-bullhorn me-2"></i> Marketing
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Marketing</span>
                         </a>
                         <a class="nav-link {{ request()->routeIs('resells.*') ? 'active' : '' }}" href="{{ route('resells.index') }}">
-                            <i class="fas fa-exchange-alt me-2"></i> Resell Tracking
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Resell Tracking</span>
                         </a>
                     </nav>
                 </div>
