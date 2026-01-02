@@ -4,6 +4,64 @@
 @section('page-title', 'Customer Management')
 
 @section('content')
+<style>
+    .customer-type-tabs {
+        border-bottom: 2px solid #dee2e6;
+        margin-bottom: 0;
+    }
+    
+    .customer-type-tabs .nav-link {
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #6c757d;
+        font-weight: 600;
+        padding: 1rem 1.5rem;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    
+    .customer-type-tabs .nav-link:hover {
+        color: #495057;
+        background-color: #f8f9fa;
+        border-bottom-color: #adb5bd;
+    }
+    
+    .customer-type-tabs .nav-link.active {
+        color: #007bff;
+        background-color: transparent;
+        border-bottom-color: #007bff;
+    }
+    
+    .tab-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+    }
+    
+    .tab-badge-all {
+        background-color: #e7f3ff;
+        color: #0066cc;
+    }
+    
+    .tab-badge-retailer {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .tab-badge-individual {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .tab-badge-wholesaler {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+</style>
+
 <div class="row mb-4">
     <div class="col-lg-8">
         <h2><i class="fas fa-users me-2"></i>Customer Database</h2>
@@ -48,45 +106,101 @@
     </div>
 </div>
 
+<!-- Customer Type Tabs -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <ul class="nav nav-tabs customer-type-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link {{ $customerType === 'all' ? 'active' : '' }}" 
+                           href="{{ route('customers.index', array_merge(request()->except('type'), ['type' => 'all'])) }}">
+                            <i class="fas fa-users me-2"></i>All Customers
+                            <span class="tab-badge tab-badge-all">{{ $totalCount }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ $customerType === 'retailer' ? 'active' : '' }}" 
+                           href="{{ route('customers.index', array_merge(request()->except('type'), ['type' => 'retailer'])) }}">
+                            <i class="fas fa-store me-2"></i>Retailer
+                            <span class="tab-badge tab-badge-retailer">{{ $retailerCount }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ $customerType === 'individual' ? 'active' : '' }}" 
+                           href="{{ route('customers.index', array_merge(request()->except('type'), ['type' => 'individual'])) }}">
+                            <i class="fas fa-user me-2"></i>Individual
+                            <span class="tab-badge tab-badge-individual">{{ $individualCount }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ $customerType === 'wholesaler' ? 'active' : '' }}" 
+                           href="{{ route('customers.index', array_merge(request()->except('type'), ['type' => 'wholesaler'])) }}">
+                            <i class="fas fa-warehouse me-2"></i>Wholesaler
+                            <span class="tab-badge tab-badge-wholesaler">{{ $wholesalerCount }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Customer Statistics -->
 <div class="row mb-4">
     <div class="col-lg-3 mb-3">
         <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #007bff, #0056b3);">
             <div class="card-body py-4">
                 <i class="fas fa-users fa-2x mb-3"></i>
-                <h3 class="mb-2">{{ $customers->total() }}</h3>
-                <p class="mb-1 fw-bold">Total Customers</p>
-                <small class="opacity-75">All Customer Types</small>
+                <h3 class="mb-2">{{ $customerCount }}</h3>
+                <p class="mb-1 fw-bold">
+                    @if($customerType === 'all')
+                        Total Customers
+                    @elseif($customerType === 'retailer')
+                        Retailers
+                    @elseif($customerType === 'individual')
+                        Individuals
+                    @else
+                        Wholesalers
+                    @endif
+                </p>
+                <small class="opacity-75">
+                    @if($customerType === 'all')
+                        All Customer Types
+                    @else
+                        {{ ucfirst($customerType) }} Type
+                    @endif
+                </small>
             </div>
         </div>
     </div>
     <div class="col-lg-3 mb-3">
         <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #28a745, #20c997);">
             <div class="card-body py-4">
-                <i class="fas fa-store fa-2x mb-3"></i>
-                <h3 class="mb-2">{{ $customers->where('customer_type', 'retailer')->count() }}</h3>
-                <p class="mb-1 fw-bold">Retailers</p>
-                <small class="opacity-75">Store Owners</small>
+                <i class="fas fa-dollar-sign fa-2x mb-3"></i>
+                <h3 class="mb-2">RM{{ number_format($totalRevenue, 2) }}</h3>
+                <p class="mb-1 fw-bold">Total Revenue</p>
+                <small class="opacity-75">From Displayed Customers</small>
             </div>
         </div>
     </div>
     <div class="col-lg-3 mb-3">
         <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #17a2b8, #138496);">
             <div class="card-body py-4">
-                <i class="fas fa-warehouse fa-2x mb-3"></i>
-                <h3 class="mb-2">{{ $customers->where('customer_type', 'wholesaler')->count() }}</h3>
-                <p class="mb-1 fw-bold">Wholesalers</p>
-                <small class="opacity-75">Bulk Buyers</small>
+                <i class="fas fa-chart-line fa-2x mb-3"></i>
+                <h3 class="mb-2">RM{{ $customerCount > 0 ? number_format($totalRevenue / $customerCount, 2) : '0.00' }}</h3>
+                <p class="mb-1 fw-bold">Avg Customer Value</p>
+                <small class="opacity-75">Per Customer</small>
             </div>
         </div>
     </div>
     <div class="col-lg-3 mb-3">
         <div class="card text-center text-white shadow-sm" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
             <div class="card-body py-4">
-                <i class="fas fa-user fa-2x mb-3"></i>
-                <h3 class="mb-2">{{ $customers->where('customer_type', 'individual')->count() }}</h3>
-                <p class="mb-1 fw-bold">Individuals</p>
-                <small class="opacity-75">Personal Buyers</small>
+                <i class="fas fa-weight fa-2x mb-3"></i>
+                <h3 class="mb-2">{{ number_format($totalQuantity, 2) }} kg</h3>
+                <p class="mb-1 fw-bold">Total Quantity</p>
+                <small class="opacity-75">Purchased</small>
             </div>
         </div>
     </div>

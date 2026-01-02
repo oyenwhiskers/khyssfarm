@@ -31,25 +31,114 @@ class SaleController extends Controller
             $query->where('harvest_batch_id', $request->batch_id);
         }
         
-        $sales = $query->latest('sale_date')->paginate(20);
+        // Get all sales for grouping and analysis
+        $allSales = $query->latest('sale_date')->get();
+        
+        // For pagination when in list view
+        $salesPaginated = $query->latest('sale_date')->paginate(20);
+        $salesPaginated->appends($request->query());
         
         // Calculate revenue only from paid sales
-        $paidSalesQuery = clone $query;
-        $totalRevenue = $paidSalesQuery->where('payment_status', 'paid')->sum('total_amount');
-        $totalQuantitySold = $paidSalesQuery->where('payment_status', 'paid')->sum('quantity_kg');
+        $totalRevenue = $allSales->where('payment_status', 'paid')->sum('total_amount');
+        $totalQuantitySold = $allSales->where('payment_status', 'paid')->sum('quantity_kg');
         $averagePrice = $totalQuantitySold > 0 ? $totalRevenue / $totalQuantitySold : 0;
         
-        // Calculate pending revenue separately for display
-        $pendingRevenueQuery = clone $query;
-        $pendingRevenue = $pendingRevenueQuery->where('payment_status', 'pending')->sum('total_amount');
+        // Calculate payment status breakdown
+        $paidRevenue = $allSales->where('payment_status', 'paid')->sum('total_amount');
+        $pendingRevenue = $allSales->where('payment_status', 'pending')->sum('total_amount');
+        $partialRevenue = $allSales->where('payment_status', 'partial')->sum('total_amount');
+        $totalSalesAmount = $paidRevenue + $pendingRevenue + $partialRevenue;
+        
+        // Count by status
+        $paidCount = $allSales->where('payment_status', 'paid')->count();
+        $pendingCount = $allSales->where('payment_status', 'pending')->count();
+        $partialCount = $allSales->where('payment_status', 'partial')->count();
+        
+        // Group sales by month/year
+        $salesByMonth = $allSales->groupBy(function($sale) {
+            return $sale->sale_date->format('Y-m');
+        })->sortByDesc(function($group) {
+            return $group->first()->sale_date;
+        });
+        
+        // Calculate monthly statistics for charts
+        $monthlyStats = [];
+        $maxMonthlyRevenue = 0;
+        
+        foreach ($salesByMonth as $monthKey => $monthSales) {
+            $monthRevenue = $monthSales->sum('total_amount');
+            $monthQuantity = $monthSales->sum('quantity_kg');
+            $monthDate = $monthSales->first()->sale_date;
+            
+            $monthlyStats[$monthKey] = [
+                'revenue' => $monthRevenue,
+                'quantity' => $monthQuantity,
+                'count' => $monthSales->count(),
+                'paid' => $monthSales->where('payment_status', 'paid')->sum('total_amount'),
+                'pending' => $monthSales->where('payment_status', 'pending')->sum('total_amount'),
+                'partial' => $monthSales->where('payment_status', 'partial')->sum('total_amount'),
+            ];
+            
+            if ($monthRevenue > $maxMonthlyRevenue) {
+                $maxMonthlyRevenue = $monthRevenue;
+            }
+        }
+        
+        // Prepare chart data (chronological order)
+        $sortedMonths = $salesByMonth->sortBy(function($group) {
+            return $group->first()->sale_date;
+        });
+        
+        $chartLabels = [];
+        $revenueChartData = [];
+        
+        foreach ($sortedMonths as $monthKey => $monthSales) {
+            $monthDate = $monthSales->first()->sale_date;
+            $chartLabels[] = $monthDate->format('M Y');
+            $revenueChartData[] = round($monthlyStats[$monthKey]['revenue'], 2);
+        }
+        
+        // Customer summary - top customers by revenue
+        $customerSummary = $allSales->groupBy('customer_id')->map(function($customerSales) {
+            $customer = $customerSales->first()->customer;
+            return [
+                'customer' => $customer ? $customer->name : 'Walk-in Customer',
+                'customer_type' => $customer ? $customer->customer_type : 'walk-in',
+                'revenue' => $customerSales->sum('total_amount'),
+                'quantity' => $customerSales->sum('quantity_kg'),
+                'count' => $customerSales->count(),
+                'paid_count' => $customerSales->where('payment_status', 'paid')->count(),
+            ];
+        })->sortByDesc('revenue')->take(10);
         
         // Get harvest batches for filter dropdown
         $harvestBatches = Harvest::orderBy('harvest_date', 'desc')->get();
         
-        // Preserve filter parameters in pagination
-        $sales->appends($request->query());
+        // Determine view mode
+        $viewMode = $request->get('view', 'grouped');
         
-        return view('sales.index', compact('sales', 'totalRevenue', 'totalQuantitySold', 'averagePrice', 'pendingRevenue', 'harvestBatches'));
+        return view('sales.index', compact(
+            'salesPaginated',
+            'allSales',
+            'totalRevenue',
+            'totalQuantitySold',
+            'averagePrice',
+            'paidRevenue',
+            'pendingRevenue',
+            'partialRevenue',
+            'totalSalesAmount',
+            'paidCount',
+            'pendingCount',
+            'partialCount',
+            'harvestBatches',
+            'salesByMonth',
+            'monthlyStats',
+            'maxMonthlyRevenue',
+            'chartLabels',
+            'revenueChartData',
+            'customerSummary',
+            'viewMode'
+        ));
     }
 
     /**

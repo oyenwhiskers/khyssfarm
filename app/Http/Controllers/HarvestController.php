@@ -23,14 +23,89 @@ class HarvestController extends Controller
             $query->whereDate('harvest_date', '<=', $request->date_to);
         }
         
-        $harvests = $query->latest('harvest_date')->paginate(20);
-        $totalYield = $query->sum('quantity_kg');
-        $averageYield = $query->avg('quantity_kg');
+        // Get all harvests
+        $allHarvests = $query->latest('harvest_date')->get();
         
-        // Preserve filter parameters in pagination
-        $harvests->appends($request->query());
+        $totalYield = $allHarvests->sum('quantity_kg');
+        $averageYield = $allHarvests->count() > 0 ? $allHarvests->avg('quantity_kg') : 0;
         
-        return view('harvests.index', compact('harvests', 'totalYield', 'averageYield'));
+        // Group harvests by month/year
+        $harvestsByMonth = $allHarvests->groupBy(function($harvest) {
+            return $harvest->harvest_date->format('Y-m');
+        })->sortByDesc(function($group) {
+            return $group->first()->harvest_date;
+        });
+        
+        // Calculate monthly statistics
+        $monthlyStats = [];
+        $maxMonthlyYield = 0;
+        
+        foreach ($harvestsByMonth as $monthKey => $monthHarvests) {
+            $monthYield = $monthHarvests->sum('quantity_kg');
+            $monthRevenue = $monthHarvests->sum('total_revenue');
+            $monthDate = $monthHarvests->first()->harvest_date;
+            $daysInMonth = $monthDate->daysInMonth;
+            $avgPerDay = $daysInMonth > 0 ? $monthYield / $daysInMonth : 0;
+            
+            $monthlyStats[$monthKey] = [
+                'yield' => $monthYield,
+                'revenue' => $monthRevenue,
+                'avg_per_day' => $avgPerDay,
+                'count' => $monthHarvests->count(),
+            ];
+            
+            if ($monthYield > $maxMonthlyYield) {
+                $maxMonthlyYield = $monthYield;
+            }
+        }
+        
+        // Prepare chart data for trend visualization
+        $chartLabels = [];
+        $yieldChartData = [];
+        $revenueChartData = [];
+        
+        // Sort by month chronologically for charts
+        $sortedMonths = $harvestsByMonth->sortBy(function($group) {
+            return $group->first()->harvest_date;
+        });
+        
+        foreach ($sortedMonths as $monthKey => $monthHarvests) {
+            $monthDate = $monthHarvests->first()->harvest_date;
+            $chartLabels[] = $monthDate->format('M Y');
+            $yieldChartData[] = round($monthlyStats[$monthKey]['yield'], 2);
+            $revenueChartData[] = round($monthlyStats[$monthKey]['revenue'], 2);
+        }
+        
+        // Calculate summary statistics
+        $highestYieldMonth = null;
+        $highestYieldValue = 0;
+        foreach ($monthlyStats as $monthKey => $stats) {
+            if ($stats['yield'] > $highestYieldValue) {
+                $highestYieldValue = $stats['yield'];
+                $highestYieldMonth = $monthKey;
+            }
+        }
+        
+        $totalRevenue = $allHarvests->sum('total_revenue');
+        
+        // Determine view mode
+        $viewMode = $request->get('view', 'grouped');
+        
+        return view('harvests.index', compact(
+            'harvestsByMonth',
+            'monthlyStats',
+            'allHarvests',
+            'totalYield',
+            'averageYield',
+            'viewMode',
+            'maxMonthlyYield',
+            'chartLabels',
+            'yieldChartData',
+            'revenueChartData',
+            'highestYieldMonth',
+            'highestYieldValue',
+            'totalRevenue'
+        ));
     }
 
     /**

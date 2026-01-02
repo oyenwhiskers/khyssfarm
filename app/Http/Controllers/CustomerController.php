@@ -28,12 +28,67 @@ class CustomerController extends Controller
             $query->where('marketing_campaign_id', $request->campaign);
         }
         
+        // Filter by customer type (for tabs)
+        $customerType = $request->get('type', 'all');
+        if ($customerType !== 'all') {
+            $query->where('customer_type', $customerType);
+        }
+        
+        // Get counts for tab badges (apply date/campaign filters but not type filter)
+        $baseQuery = Customer::query();
+        if ($request->filled('date_from')) {
+            $baseQuery->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $baseQuery->whereDate('created_at', '<=', $request->date_to);
+        }
+        if ($request->filled('campaign')) {
+            $baseQuery->where('marketing_campaign_id', $request->campaign);
+        }
+        
+        $totalCount = $baseQuery->count();
+        $retailerCount = (clone $baseQuery)->where('customer_type', 'retailer')->count();
+        $individualCount = (clone $baseQuery)->where('customer_type', 'individual')->count();
+        $wholesalerCount = (clone $baseQuery)->where('customer_type', 'wholesaler')->count();
+        
+        // Calculate totals before pagination (for summary cards)
+        // Get customer IDs for the filtered query
+        $customerIds = $query->pluck('id');
+        
+        // Calculate total revenue from both sales types
+        $farmSalesRevenue = \App\Models\Sale::whereIn('customer_id', $customerIds)
+            ->where('payment_status', 'paid')
+            ->sum('total_amount');
+        $resellSalesRevenue = \App\Models\ResellSale::whereIn('customer_id', $customerIds)
+            ->sum('total_sale_amount');
+        $totalRevenue = $farmSalesRevenue + $resellSalesRevenue;
+        
+        // Calculate total quantity from both sales types
+        $farmSalesQuantity = \App\Models\Sale::whereIn('customer_id', $customerIds)
+            ->where('payment_status', 'paid')
+            ->sum('quantity_kg');
+        $resellSalesQuantity = \App\Models\ResellSale::whereIn('customer_id', $customerIds)
+            ->sum('sale_quantity_kg');
+        $totalQuantity = $farmSalesQuantity + $resellSalesQuantity;
+        
+        $customerCount = $customerIds->count();
+        
         $customers = $query->latest()->paginate(20);
         
         // Preserve filter parameters in pagination
         $customers->appends($request->query());
             
-        return view('customers.index', compact('customers'));
+        return view('customers.index', compact(
+            'customers', 
+            'customerType',
+            'totalCount',
+            'retailerCount',
+            'individualCount',
+            'wholesalerCount',
+            'totalRevenue',
+            'totalQuantity',
+            'customerCount'
+        ));
     }
 
     /**

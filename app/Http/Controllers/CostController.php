@@ -28,20 +28,77 @@ class CostController extends Controller
             $query->where('category', $request->category);
         }
         
-        $costs = $query->latest('date')->paginate(20);
+        // Get total costs and category breakdown for stats
         $totalCosts = $query->sum('amount');
-        $costsByCategory = $query->selectRaw('category, SUM(amount) as total')
+        $costsByCategory = (clone $query)->selectRaw('category, SUM(amount) as total')
             ->groupBy('category')
             ->orderBy('total', 'desc')
             ->get();
+        
+        // Calculate percentages for categories
+        $maxCategoryTotal = $costsByCategory->max('total') ?? 0;
+        $costsByCategory = $costsByCategory->map(function($cat) use ($totalCosts, $maxCategoryTotal) {
+            $cat->percentage = $totalCosts > 0 ? ($cat->total / $totalCosts * 100) : 0;
+            $cat->progressPercent = $maxCategoryTotal > 0 ? ($cat->total / $maxCategoryTotal * 100) : 0;
+            return $cat;
+        });
+        
+        // Get all costs and group by month/year
+        $allCosts = $query->latest('date')->get();
+        
+        // Group costs by month/year
+        $costsByMonth = $allCosts->groupBy(function($cost) {
+            return $cost->date->format('Y-m');
+        })->sortByDesc(function($group) {
+            return $group->first()->date;
+        });
+        
+        // Calculate monthly totals and daily averages
+        $monthlyTotals = [];
+        $monthlyAverages = [];
+        $chartLabels = [];
+        $chartData = [];
+        $maxMonthlyTotal = 0;
+        
+        foreach ($costsByMonth as $monthKey => $monthlyCosts) {
+            $total = $monthlyCosts->sum('amount');
+            $firstCost = $monthlyCosts->first();
+            $monthDate = $firstCost->date;
+            $daysInMonth = $monthDate->daysInMonth;
+            $average = $daysInMonth > 0 ? $total / $daysInMonth : 0;
             
+            $monthlyTotals[$monthKey] = $total;
+            $monthlyAverages[$monthKey] = $average;
+            
+            // For chart - add formatted labels and data
+            $chartLabels[] = $monthDate->format('M Y');
+            $chartData[] = round($total, 2);
+            
+            // Track max for progress bar calculation
+            if ($total > $maxMonthlyTotal) {
+                $maxMonthlyTotal = $total;
+            }
+        }
+        
         // Get all categories for filter dropdown
         $categories = Cost::getCostCategories();
+        
+        // Determine view mode (grouped or list)
+        $viewMode = $request->get('view', 'grouped');
             
-        // Preserve filter parameters in pagination
-        $costs->appends($request->query());
-            
-        return view('costs.index', compact('costs', 'totalCosts', 'costsByCategory', 'categories'));
+        return view('costs.index', compact(
+            'costsByMonth',
+            'monthlyTotals',
+            'monthlyAverages',
+            'totalCosts',
+            'costsByCategory',
+            'categories',
+            'allCosts',
+            'chartLabels',
+            'chartData',
+            'viewMode',
+            'maxMonthlyTotal'
+        ));
     }
 
     /**
