@@ -35,24 +35,27 @@ class Harvest extends Model
 
     public function getTotalQuantitySoldAttribute()
     {
-        return $this->sales()->where('payment_status', 'paid')->sum('quantity_kg');
+        return (float) $this->sales()->where('payment_status', 'paid')->sum('quantity_kg');
     }
 
     public function getTotalQuantityAllocatedAttribute()
     {
         // Include all sales (paid + pending) to show allocated quantity
-        return $this->sales()->sum('quantity_kg');
+        return (float) $this->sales()->sum('quantity_kg');
     }
 
     public function getRemainingQuantityAttribute()
     {
-        return $this->quantity_kg - $this->total_quantity_sold;
+        return round((float) $this->quantity_kg - $this->total_quantity_sold, 2);
     }
 
     public function getAvailableQuantityAttribute()
     {
         // Available = harvested - allocated (including pending sales)
-        return $this->quantity_kg - $this->total_quantity_allocated;
+        $available = (float) $this->quantity_kg - $this->total_quantity_allocated;
+
+        // Round to two decimals to avoid tiny floating point differences
+        return round(max($available, 0), 2);
     }
 
     public function getTotalRevenueAttribute()

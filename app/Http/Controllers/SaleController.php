@@ -176,10 +176,16 @@ class SaleController extends Controller
         // Validate batch availability if batch is selected
         if ($validated['harvest_batch_id']) {
             $harvestBatch = Harvest::find($validated['harvest_batch_id']);
-            if ($harvestBatch && $harvestBatch->available_quantity < $validated['quantity_kg']) {
-                return back()->withErrors([
-                    'quantity_kg' => "Only {$harvestBatch->available_quantity} kg available in this batch. Current allocation would exceed harvest quantity."
-                ])->withInput();
+            if ($harvestBatch) {
+                $availableQuantity = round((float) $harvestBatch->available_quantity, 2);
+                $requestedQuantity = round((float) $validated['quantity_kg'], 2);
+
+                // Small epsilon guards against float rounding noise
+                if ($availableQuantity + 0.0001 < $requestedQuantity) {
+                    return back()->withErrors([
+                        'quantity_kg' => "Only {$availableQuantity} kg available in this batch. Current allocation would exceed harvest quantity."
+                    ])->withInput();
+                }
             }
         }
 
@@ -238,8 +244,11 @@ class SaleController extends Controller
             $harvestBatch = Harvest::find($validated['harvest_batch_id']);
             if ($harvestBatch) {
                 // Calculate available quantity (excluding current sale quantity)
-                $availableQuantity = $harvestBatch->available_quantity + $sale->quantity_kg;
-                if ($availableQuantity < $validated['quantity_kg']) {
+                $availableQuantity = round((float) $harvestBatch->available_quantity + (float) $sale->quantity_kg, 2);
+                $requestedQuantity = round((float) $validated['quantity_kg'], 2);
+
+                // Small epsilon guards against float rounding noise
+                if ($availableQuantity + 0.0001 < $requestedQuantity) {
                     return back()->withErrors([
                         'quantity_kg' => "Only {$availableQuantity} kg available in this batch. Current allocation would exceed harvest quantity."
                     ])->withInput();

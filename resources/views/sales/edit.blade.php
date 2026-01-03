@@ -49,10 +49,14 @@
                             <select class="form-select @error('harvest_batch_id') is-invalid @enderror" id="harvest_batch_id" name="harvest_batch_id">
                                 <option value="">-- Select Harvest Batch (optional) --</option>
                                 @foreach($harvestBatches as $batch)
+                                    @php
+                                        // Show available qty and credit back the current sale if it belongs to this batch
+                                        $available = $batch->available_quantity + (($sale->harvest_batch_id === $batch->id) ? $sale->quantity_kg : 0);
+                                    @endphp
                                     <option value="{{ $batch->id }}" 
                                         {{ (old('harvest_batch_id') ?? $sale->harvest_batch_id) == $batch->id ? 'selected' : '' }}>
                                         Batch #{{ $batch->id }} - {{ $batch->harvest_date->format('M d, Y') }} 
-                                        ({{ $batch->variety ?: 'Mixed' }}) - {{ number_format($batch->quantity_kg, 2) }}kg available
+                                        ({{ $batch->variety ?: 'Mixed' }}) - {{ number_format($available, 2) }}kg available
                                     </option>
                                 @endforeach
                             </select>
