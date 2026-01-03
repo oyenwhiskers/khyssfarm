@@ -318,6 +318,14 @@
                             <i class="fas fa-users"></i>
                             <span>Customers</span>
                         </a>
+                        <a class="nav-link {{ request()->routeIs('workers.*') ? 'active' : '' }}" href="{{ route('workers.index') }}">
+                            <i class="fa-solid fa-helmet-safety me-2"></i>
+                            <span>Workers</span>
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="{{ route('tasks.index') }}">
+                            <i class="fas fa-list-check"></i>
+                            <span>Task Management</span>
+                        </a>
                         <a class="nav-link {{ request()->routeIs('costs.*') ? 'active' : '' }}" href="{{ route('costs.index') }}">
                             <i class="fas fa-coins"></i>
                             <span>Cost Management</span>

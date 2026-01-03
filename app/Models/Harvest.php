@@ -27,6 +27,14 @@ class Harvest extends Model
         return $this->hasMany(Sale::class, 'harvest_batch_id');
     }
 
+    /**
+     * Relationship to tasks that contributed to this batch
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'harvest_batch_id');
+    }
+
     public function getBatchNameAttribute()
     {
         return "Batch #{$this->id} - " . $this->harvest_date->format('M d, Y') . 

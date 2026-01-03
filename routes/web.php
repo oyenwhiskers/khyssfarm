@@ -10,6 +10,8 @@ use App\Http\Controllers\PriceController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\ResellController;
 use App\Http\Controllers\ResellSaleController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\WorkerController;
 use App\Services\OpenAIService;
 
 // Dashboard - Main landing page
@@ -24,6 +26,8 @@ Route::resource('costs', CostController::class);
 Route::resource('prices', PriceController::class);
 Route::resource('marketing', MarketingController::class);
 Route::resource('resells', ResellController::class);
+Route::resource('workers', WorkerController::class);
+Route::resource('tasks', TaskController::class);
 
 // Additional routes
 Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
@@ -38,3 +42,9 @@ Route::post('resells/{resell}/store-sale', [ResellController::class, 'storeSale'
 
 // Resell Sales management routes
 Route::resource('resell-sales', ResellSaleController::class)->only(['edit', 'update', 'destroy']);
+
+// Worker additional routes
+Route::get('workers/{worker}/payslip', [WorkerController::class, 'payslip'])->name('workers.payslip');
+
+// Task API routes
+Route::get('api/tasks/next-job-number', [TaskController::class, 'getNextJobNumber'])->name('tasks.api.next-job-number');

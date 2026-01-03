@@ -16,12 +16,22 @@ class Cost extends Model
         'amount',
         'supplier',
         'notes',
+        'task_id',
     ];
 
     protected $casts = [
         'date' => 'date',
         'amount' => 'decimal:2',
     ];
+
+    /**
+     * Relationship to Task
+     * A cost belongs to a task
+     */
+    public function task()
+    {
+        return $this->belongsTo(Task::class);
+    }
 
     public static function getCostCategories()
     {
