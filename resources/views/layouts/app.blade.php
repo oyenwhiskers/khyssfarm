@@ -124,6 +124,28 @@
             transform: scale(1.2);
         }
         
+        /* Sidebar Section Titles */
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 18px 8px 18px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-section-title i {
+            font-size: 0.7rem;
+        }
+        
+        .sidebar-section-title:first-of-type {
+            margin-top: 0;
+        }
+        
         .sidebar-footer {
             position: absolute;
             bottom: 0;
@@ -302,14 +324,35 @@
                 </div>
                 <div class="sidebar-content">
                     <nav class="nav flex-column">
+                        <!-- Dashboard -->
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <i class="fas fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
+                        
+                        <!-- Farm Operations Section -->
+                        <div class="sidebar-section-title">
+                            <i class="fas fa-leaf"></i>
+                            <span>Farm Operations</span>
+                        </div>
                         <a class="nav-link {{ request()->routeIs('harvests.*') ? 'active' : '' }}" href="{{ route('harvests.index') }}">
                             <i class="fas fa-seedling"></i>
                             <span>Harvest Records</span>
                         </a>
+                        <a class="nav-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="{{ route('tasks.index') }}">
+                            <i class="fas fa-list-check"></i>
+                            <span>Task Management</span>
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('workers.*') ? 'active' : '' }}" href="{{ route('workers.index') }}">
+                            <i class="fa-solid fa-helmet-safety"></i>
+                            <span>Workers</span>
+                        </a>
+                        
+                        <!-- Sales & Customers Section -->
+                        <div class="sidebar-section-title">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Sales & Customers</span>
+                        </div>
                         <a class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}">
                             <i class="fas fa-shopping-cart"></i>
                             <span>Sales Tracking</span>
@@ -318,29 +361,27 @@
                             <i class="fas fa-users"></i>
                             <span>Customers</span>
                         </a>
-                        <a class="nav-link {{ request()->routeIs('workers.*') ? 'active' : '' }}" href="{{ route('workers.index') }}">
-                            <i class="fa-solid fa-helmet-safety me-2"></i>
-                            <span>Workers</span>
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="{{ route('tasks.index') }}">
-                            <i class="fas fa-list-check"></i>
-                            <span>Task Management</span>
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('costs.*') ? 'active' : '' }}" href="{{ route('costs.index') }}">
-                            <i class="fas fa-coins"></i>
-                            <span>Cost Management</span>
-                        </a>
                         <a class="nav-link {{ request()->routeIs('prices.*') ? 'active' : '' }}" href="{{ route('prices.index') }}">
                             <i class="fas fa-tags"></i>
                             <span>Pricing</span>
                         </a>
-                        <a class="nav-link {{ request()->routeIs('marketing.*') ? 'active' : '' }}" href="{{ route('marketing.index') }}">
-                            <i class="fas fa-bullhorn"></i>
-                            <span>Marketing</span>
-                        </a>
                         <a class="nav-link {{ request()->routeIs('resells.*') ? 'active' : '' }}" href="{{ route('resells.index') }}">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Resell Tracking</span>
+                        </a>
+                        
+                        <!-- Finance & Marketing Section -->
+                        <div class="sidebar-section-title">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Finance & Marketing</span>
+                        </div>
+                        <a class="nav-link {{ request()->routeIs('costs.*') ? 'active' : '' }}" href="{{ route('costs.index') }}">
+                            <i class="fas fa-coins"></i>
+                            <span>Cost Management</span>
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('marketing.*') ? 'active' : '' }}" href="{{ route('marketing.index') }}">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Marketing</span>
                         </a>
                     </nav>
                 </div>
