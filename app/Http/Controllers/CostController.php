@@ -51,6 +51,8 @@ class CostController extends Controller
             return $cost->date->format('Y-m');
         })->sortByDesc(function($group) {
             return $group->first()->date;
+        })->map(function($group) {
+            return $group->sortByDesc('created_at');  // Latest recorded first
         });
         
         // Calculate monthly totals and daily averages

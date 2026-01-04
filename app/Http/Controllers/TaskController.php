@@ -50,6 +50,8 @@ class TaskController extends Controller
             return $task->work_date->format('Y-m');
         })->sortByDesc(function ($group) {
             return $group->first()->work_date;
+        })->map(function($group) {
+            return $group->sortByDesc('created_at');  // Latest recorded first
         });
 
         // Monthly stats for headers

@@ -59,6 +59,9 @@ class SaleController extends Controller
             return $sale->sale_date->format('Y-m');
         })->sortByDesc(function($group) {
             return $group->first()->sale_date;
+        })->map(function($group) {
+            // Sort each month's sales by created_at descending (latest first by time recorded)
+            return $group->sortByDesc('created_at');
         });
         
         // Calculate monthly statistics for charts

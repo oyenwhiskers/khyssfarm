@@ -34,6 +34,8 @@ class HarvestController extends Controller
             return $harvest->harvest_date->format('Y-m');
         })->sortByDesc(function($group) {
             return $group->first()->harvest_date;
+        })->map(function($group) {
+            return $group->sortByDesc('created_at');  // Latest recorded first
         });
         
         // Calculate monthly statistics
