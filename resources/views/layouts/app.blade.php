@@ -383,6 +383,22 @@
                             <i class="fas fa-bullhorn"></i>
                             <span>Marketing</span>
                         </a>
+
+                        @can('admin')
+                        <!-- Admin Section -->
+                        <div class="sidebar-section-title">
+                            <i class="fas fa-shield-halved"></i>
+                            <span>Administration</span>
+                        </div>
+                        <a class="nav-link {{ request()->routeIs('admin.accounts.*') ? 'active' : '' }}" href="{{ route('admin.accounts.index') }}">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Account Management</span>
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>Activity Logs</span>
+                        </a>
+                        @endcan
                     </nav>
                 </div>
             </div>
@@ -392,11 +408,35 @@
                 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
                     <div class="container-fluid">
                         <span class="navbar-brand">@yield('page-title', 'Dashboard')</span>
-                        <div class="navbar-nav ms-auto">
+                        <div class="navbar-nav ms-auto d-flex align-items-center">
                             <span class="nav-item nav-link">
                                 <i class="fas fa-calendar me-1"></i>
                                 {{ now()->format('F d, Y') }}
                             </span>
+                            @auth
+                                <div class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-circle me-1"></i>
+                                        {{ Auth::user()->name }}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                                <i class="fas fa-user-edit me-2"></i>Profile
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @endauth
                         </div>
                     </div>
                 </nav>
