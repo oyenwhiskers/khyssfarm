@@ -35,8 +35,6 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             overflow: hidden;
             max-width: 420px;
-            max-height: 90vh;
-            overflow-y: auto;
             width: 100%;
             margin: 0;
         }
@@ -61,7 +59,7 @@
         }
         
         .auth-body {
-            padding: 28px;
+            padding: 32px;
         }
         
         .form-label {
@@ -119,18 +117,6 @@
         
         .alert {
             border-radius: 8px;
-        }
-
-        @media (max-height: 760px) {
-            .auth-header {
-                padding: 18px;
-            }
-            .auth-body {
-                padding: 22px;
-            }
-            .logo {
-                font-size: 40px;
-            }
         }
     </style>
 </head>
