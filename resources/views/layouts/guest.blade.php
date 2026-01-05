@@ -5,19 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'KHYSS Farm') }}</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        html, body {
+            height: 100%;
+        }
+        
         body {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: clamp(16px, 3vw, 32px);
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
         }
         
         .auth-card {
@@ -25,15 +34,17 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             overflow: hidden;
-            max-width: 450px;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
             width: 100%;
-            margin: 20px;
+            margin: 0;
         }
         
         .auth-header {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
-            padding: 30px;
+            padding: 24px;
             text-align: center;
         }
         
@@ -50,7 +61,7 @@
         }
         
         .auth-body {
-            padding: 40px;
+            padding: 28px;
         }
         
         .form-label {
@@ -108,6 +119,18 @@
         
         .alert {
             border-radius: 8px;
+        }
+
+        @media (max-height: 760px) {
+            .auth-header {
+                padding: 18px;
+            }
+            .auth-body {
+                padding: 22px;
+            }
+            .logo {
+                font-size: 40px;
+            }
         }
     </style>
 </head>
