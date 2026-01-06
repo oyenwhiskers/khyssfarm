@@ -61,9 +61,10 @@ Route::middleware(['auth'])->group(function () {
     // Activity Log routes - Admin only
     Route::middleware('can:admin')->group(function () {
         Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('activity-logs/analytics', [ActivityLogController::class, 'analytics'])->name('activity-logs.analytics');
+        Route::get('activity-logs/export/csv', [ActivityLogController::class, 'export'])->name('activity-logs.export');
         Route::get('activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
         Route::post('activity-logs/cleanup', [ActivityLogController::class, 'cleanup'])->name('activity-logs.cleanup');
-        Route::get('activity-logs/export/csv', [ActivityLogController::class, 'export'])->name('activity-logs.export');
 
         // Admin Account Management Routes
         Route::prefix('admin')->name('admin.')->group(function () {
