@@ -16,6 +16,11 @@ class CheckAccountStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Skip this middleware for the pending page and logout to avoid redirect loops
+        if ($request->routeIs('account.pending') || $request->routeIs('logout')) {
+            return $next($request);
+        }
+
         // Check if user is authenticated
         if (Auth::check()) {
             $user = Auth::user();
